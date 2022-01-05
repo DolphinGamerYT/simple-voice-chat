@@ -311,4 +311,11 @@ public class Client extends Thread {
         }
     }
 
+    public void setVoiceChatDistance(double voiceChatDistance) {
+        this.voiceChatDistance = voiceChatDistance;
+    }
+
+    public void setVoiceChatFadeDistance(double voiceChatFadeDistance) {
+        this.voiceChatFadeDistance = voiceChatFadeDistance;
+    }
 }

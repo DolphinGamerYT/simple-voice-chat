@@ -9,10 +9,7 @@ import de.maxhenkel.voicechat.VoicechatClient;
 import de.maxhenkel.voicechat.debug.DebugReport;
 import de.maxhenkel.voicechat.events.*;
 import de.maxhenkel.voicechat.gui.*;
-import de.maxhenkel.voicechat.net.NetManager;
-import de.maxhenkel.voicechat.net.RequestSecretPacket;
-import de.maxhenkel.voicechat.net.SecretPacket;
-import de.maxhenkel.voicechat.net.SetGroupPacket;
+import de.maxhenkel.voicechat.net.*;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -77,6 +74,12 @@ public class ClientVoiceEvents {
             if (minecraft.screen instanceof GroupScreen || minecraft.screen instanceof CreateGroupScreen) {
                 minecraft.setScreen(null);
             }
+        });
+
+        NetManager.registerClientReceiver(DistancePacket.class, (client, handler, responseSender, packet) -> {
+            this.client.setVoiceChatDistance(packet.getVoiceChatDistance());
+            this.client.setVoiceChatFadeDistance(packet.getVoiceChatFadeDistance());
+            Voicechat.LOGGER.info("Distance Voicechat received. Distance: " + packet.getVoiceChatDistance() + " Fade: " + packet.getVoiceChatFadeDistance());
         });
     }
 
