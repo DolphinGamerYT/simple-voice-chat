@@ -63,7 +63,7 @@ public class ClientVoiceEvents {
         });
 
         NetManager.registerClientReceiver(SetGroupPacket.class, (client, handler, responseSender, packet) -> {
-            String newGroup = packet.getGroup().isEmpty() ? null : packet.getGroup();
+            /*String newGroup = packet.getGroup().isEmpty() ? null : packet.getGroup();
             if (newGroup == null && playerStateManager.getGroup() == null) {
                 return;
             }
@@ -73,7 +73,8 @@ public class ClientVoiceEvents {
             playerStateManager.setGroup(newGroup);
             if (minecraft.screen instanceof GroupScreen || minecraft.screen instanceof CreateGroupScreen) {
                 minecraft.setScreen(null);
-            }
+            }*/
+            return;
         });
 
         NetManager.registerClientReceiver(DistancePacket.class, (client, handler, responseSender, packet) -> {
@@ -186,7 +187,7 @@ public class ClientVoiceEvents {
             }
         }
 
-        if (VoicechatClient.KEY_GROUP.consumeClick() && checkConnected()) {
+        /*if (VoicechatClient.KEY_GROUP.consumeClick() && checkConnected()) {
             if (client.groupsEnabled()) {
                 if (playerStateManager.isInGroup()) {
                     minecraft.setScreen(new GroupScreen());
@@ -196,29 +197,29 @@ public class ClientVoiceEvents {
             } else {
                 minecraft.player.displayClientMessage(new TranslatableComponent("message.voicechat.groups_disabled"), true);
             }
-        }
+        }*/
 
         if (VoicechatClient.KEY_VOICE_CHAT_SETTINGS.consumeClick() && checkConnected()) {
             minecraft.setScreen(new VoiceChatSettingsScreen());
         }
 
-        if (VoicechatClient.KEY_PTT.consumeClick()) {
+        /*if (VoicechatClient.KEY_PTT.consumeClick()) {
             checkConnected();
-        }
+        }*/
 
         if (VoicechatClient.KEY_MUTE.consumeClick() && checkConnected()) {
             playerStateManager.setMuted(!playerStateManager.isMuted());
         }
 
-        if (VoicechatClient.KEY_DISABLE.consumeClick() && checkConnected()) {
+        /*if (VoicechatClient.KEY_DISABLE.consumeClick() && checkConnected()) {
             playerStateManager.setDisabled(!playerStateManager.isDisabled());
-        }
+        }*/
 
-        if (VoicechatClient.KEY_TOGGLE_RECORDING.consumeClick() && checkConnected()) {
+        /*if (VoicechatClient.KEY_TOGGLE_RECORDING.consumeClick() && checkConnected()) {
             client.toggleRecording();
-        }
+        }*/
 
-        if (VoicechatClient.KEY_HIDE_ICONS.consumeClick()) {
+        /*if (VoicechatClient.KEY_HIDE_ICONS.consumeClick()) {
             boolean hidden = !VoicechatClient.CLIENT_CONFIG.hideIcons.get();
             VoicechatClient.CLIENT_CONFIG.hideIcons.set(hidden).save();
 
@@ -227,7 +228,7 @@ public class ClientVoiceEvents {
             } else {
                 minecraft.player.displayClientMessage(new TranslatableComponent("message.voicechat.icons_visible"), true);
             }
-        }
+        }*/
     }
 
     public boolean checkConnected() {

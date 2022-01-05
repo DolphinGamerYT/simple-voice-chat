@@ -49,14 +49,14 @@ public class VoiceChatScreen extends VoiceChatScreenBase {
         });
         addButton(mute);
 
-        ToggleImageButton disable = new ToggleImageButton(guiLeft + 6 + 20 + 2, guiTop + ySize - 6 - 20, SPEAKER, stateManager::isDisabled, button -> {
+        /*ToggleImageButton disable = new ToggleImageButton(guiLeft + 6 + 20 + 2, guiTop + ySize - 6 - 20, SPEAKER, stateManager::isDisabled, button -> {
             stateManager.setDisabled(!stateManager.isDisabled());
         }, (button, matrices, mouseX, mouseY) -> {
             renderTooltip(matrices, Collections.singletonList(new TranslatableComponent("message.voicechat.disable_voice_chat").getVisualOrderText()), mouseX, mouseY);
         });
-        addButton(disable);
+        addButton(disable);*/
 
-        if (client != null && client.allowRecording()) {
+        /*if (client != null && client.allowRecording()) {
             ToggleImageButton record = new ToggleImageButton(guiLeft + xSize - 6 - 20 - 2 - 20, guiTop + ySize - 6 - 20, RECORD, () -> VoicechatClient.CLIENT.getClient() != null && VoicechatClient.CLIENT.getClient().getRecorder() != null, button -> {
                 Client c = VoicechatClient.CLIENT.getClient();
                 if (c == null) {
@@ -67,21 +67,21 @@ public class VoiceChatScreen extends VoiceChatScreenBase {
                 renderTooltip(matrices, Collections.singletonList(new TranslatableComponent("message.voicechat.toggle_recording").getVisualOrderText()), mouseX, mouseY);
             });
             addButton(record);
-        }
+        }*/
 
-        ToggleImageButton hide = new ToggleImageButton(guiLeft + xSize - 6 - 20, guiTop + ySize - 6 - 20, HIDE, VoicechatClient.CLIENT_CONFIG.hideIcons::get, button -> {
+        /*ToggleImageButton hide = new ToggleImageButton(guiLeft + xSize - 6 - 20, guiTop + ySize - 6 - 20, HIDE, VoicechatClient.CLIENT_CONFIG.hideIcons::get, button -> {
             VoicechatClient.CLIENT_CONFIG.hideIcons.set(!VoicechatClient.CLIENT_CONFIG.hideIcons.get()).save();
         }, (button, matrices, mouseX, mouseY) -> {
             renderTooltip(matrices, Collections.singletonList(new TranslatableComponent("message.voicechat.hide_icons").getVisualOrderText()), mouseX, mouseY);
         });
-        addButton(hide);
+        addButton(hide);*/
 
         Button settings = new Button(guiLeft + 6, guiTop + 6 + 15, 75, 20, new TextComponent("Settings"), button -> {
             minecraft.setScreen(new VoiceChatSettingsScreen());
         });
         addButton(settings);
 
-        Button group = new Button(guiLeft + xSize - 6 - 75 + 1, guiTop + 6 + 15, 75, 20, new TextComponent("Group"), button -> {
+        /*Button group = new Button(guiLeft + xSize - 6 - 75 + 1, guiTop + 6 + 15, 75, 20, new TextComponent("Group"), button -> {
             if (stateManager.isInGroup()) {
                 minecraft.setScreen(new GroupScreen());
             } else {
@@ -91,7 +91,7 @@ public class VoiceChatScreen extends VoiceChatScreenBase {
         addButton(group);
 
         group.active = client != null && client.groupsEnabled();
-        recordingHoverArea = new HoverArea(6 + 20 + 2 + 20 + 2, ySize - 6 - 20, xSize - (6 + 20 + 2 + 20 + 2) * 2, 20);
+        recordingHoverArea = new HoverArea(6 + 20 + 2 + 20 + 2, ySize - 6 - 20, xSize - (6 + 20 + 2 + 20 + 2) * 2, 20);*/
 
         checkButtons();
     }
