@@ -29,6 +29,7 @@ task prepareWorkspace {
 }
 
 dependencies {
+    implementation 'org.apache.logging.log4j:log4j-core:2.17.0'
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings minecraft.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
