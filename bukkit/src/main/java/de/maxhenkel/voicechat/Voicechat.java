@@ -1,7 +1,9 @@
 package de.maxhenkel.voicechat;
 
+import co.aikar.commands.PaperCommandManager;
 import de.maxhenkel.configbuilder.ConfigBuilder;
 import de.maxhenkel.voicechat.api.BukkitVoicechatService;
+import de.maxhenkel.voicechat.command.SquidVoiceCommand;
 import de.maxhenkel.voicechat.command.VoiceChatCommands;
 import de.maxhenkel.voicechat.config.ServerConfig;
 import de.maxhenkel.voicechat.integration.commodore.CommodoreCommands;
@@ -113,6 +115,9 @@ public final class Voicechat extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(SERVER, this);
             Bukkit.getPluginManager().registerEvents(SERVER.getServer().getPlayerStateManager(), this);
         });
+
+        PaperCommandManager manager = new PaperCommandManager(this);
+        manager.registerCommand(new SquidVoiceCommand());
     }
 
     private static void mergeConfigs(YamlConfiguration base, YamlConfiguration add) {
