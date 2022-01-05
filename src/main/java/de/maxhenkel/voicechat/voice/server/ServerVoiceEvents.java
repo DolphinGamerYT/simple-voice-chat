@@ -3,6 +3,7 @@ package de.maxhenkel.voicechat.voice.server;
 import de.maxhenkel.voicechat.Voicechat;
 import de.maxhenkel.voicechat.command.VoiceChatCommands;
 import de.maxhenkel.voicechat.models.VoiceRestrictions;
+import de.maxhenkel.voicechat.net.DistancePacket;
 import de.maxhenkel.voicechat.net.NetManager;
 import de.maxhenkel.voicechat.net.SecretPacket;
 import org.bukkit.entity.Player;
@@ -41,6 +42,10 @@ public class ServerVoiceEvents implements Listener {
 
         NetManager.sendToClient(player, new SecretPacket(secret, hasGroupPermission, Voicechat.SERVER_CONFIG));
         Voicechat.LOGGER.info("Sent secret to {}", player.getName());
+    }
+
+    public void sendDistanceConfig(Player player, double distance, double fadeDistance) {
+        NetManager.sendToClient(player, new DistancePacket(distance, fadeDistance));
     }
 
     @EventHandler

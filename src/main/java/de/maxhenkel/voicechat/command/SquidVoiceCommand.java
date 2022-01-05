@@ -70,6 +70,8 @@ public class SquidVoiceCommand extends BaseCommand {
         Voicechat.SERVER_CONFIG.voiceChatDistance.save();
         Voicechat.SERVER_CONFIG.voiceChatFadeDistance.set(this.fadeDistance);
         Voicechat.SERVER_CONFIG.voiceChatFadeDistance.save();
+
+        Bukkit.getOnlinePlayers().forEach(p -> Voicechat.SERVER.sendDistanceConfig(p, this.distance, this.fadeDistance));
     }
 
     @Subcommand("globalmute")
