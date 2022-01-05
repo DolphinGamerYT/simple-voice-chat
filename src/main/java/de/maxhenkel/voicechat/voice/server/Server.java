@@ -253,7 +253,7 @@ public class Server extends Thread {
         double distance = Voicechat.SERVER_CONFIG.voiceChatDistance.get();
         @Nullable String group = state.getGroup();
 
-        SoundPacket<?> soundPacket;
+        /*SoundPacket<?> soundPacket;
         if (player.getGameMode().equals(GameMode.SPECTATOR)) {
             if (Voicechat.SERVER_CONFIG.spectatorInteraction.get()) {
                 soundPacket = new LocationSoundPacket(player.getUniqueId(), player.getEyeLocation(), packet.getData(), packet.getSequenceNumber());
@@ -262,8 +262,9 @@ public class Server extends Thread {
             }
         } else {
             soundPacket = new PlayerSoundPacket(player.getUniqueId(), packet.getData(), packet.getSequenceNumber());
-        }
+        }*/
 
+        SoundPacket<?> soundPacket = new PlayerSoundPacket(player.getUniqueId(), packet.getData(), packet.getSequenceNumber());
         NetworkMessage soundMessage = new NetworkMessage(soundPacket);
 
         Collection<Player> players = this.restrictions.isSpeaker(player) ? Bukkit.getOnlinePlayers().stream().collect(Collectors.toList()) : ServerWorldUtils.getPlayersInRange(player.getWorld(), player.getLocation(), distance, p -> !p.getUniqueId().equals(player.getUniqueId()));
