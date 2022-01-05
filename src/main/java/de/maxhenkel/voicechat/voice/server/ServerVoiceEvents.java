@@ -7,6 +7,7 @@ import de.maxhenkel.voicechat.net.DistancePacket;
 import de.maxhenkel.voicechat.net.IconPacket;
 import de.maxhenkel.voicechat.net.NetManager;
 import de.maxhenkel.voicechat.net.SecretPacket;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -59,6 +60,8 @@ public class ServerVoiceEvents implements Listener {
                 status = IconPacket.IconStatus.GLOBALMUTED;
             } else if (this.voiceRestrictions.isPlayerMuted(player.getUniqueId())) {
                 status = IconPacket.IconStatus.MUTED;
+            } else if (player.getGameMode().equals(GameMode.SPECTATOR)) {
+                status = IconPacket.IconStatus.SPECTATOR;
             }
         }
 

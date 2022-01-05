@@ -15,7 +15,8 @@ public class IconPacket implements Packet<IconPacket> {
         NORMAL(0),
         SPEAKER(1),
         MUTED(2),
-        GLOBALMUTED(3);
+        GLOBALMUTED(3),
+        SPECTATOR(4);
 
         private int id;
 
