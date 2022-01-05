@@ -1,9 +1,11 @@
 package de.maxhenkel.voicechat;
 
+import co.aikar.commands.PaperCommandManager;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.wrappers.MinecraftKey;
 import de.maxhenkel.configbuilder.ConfigBuilder;
+import de.maxhenkel.voicechat.command.SquidVoiceCommand;
 import de.maxhenkel.voicechat.command.VoiceChatCommands;
 import de.maxhenkel.voicechat.config.ServerConfig;
 import de.maxhenkel.voicechat.net.NetManager;
@@ -87,6 +89,12 @@ public final class Voicechat extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(SERVER.getServer().getPlayerStateManager(), this);
 
         getCommand("voicechat").setExecutor(new VoiceChatCommands());
+
+        PaperCommandManager paperCommandManager = new PaperCommandManager(this);
+        paperCommandManager.registerCommand(new SquidVoiceCommand());
+
+        paperCommandManager.getCommandCompletions().registerStaticCompletion("bool", new String[]{"true", "false"});
+        paperCommandManager.getCommandCompletions().registerStaticCompletion("mute", new String[]{"mute", "unmute"});
     }
 
     @Override
