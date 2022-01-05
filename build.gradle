@@ -1,10 +1,10 @@
 plugins {
     id 'java'
-    id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "com.github.johnrengelman.shadow" version "7.1.1"
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaLanguageVersion.of(16 as int)
+targetCompatibility = JavaLanguageVersion.of(16 as int)
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -31,6 +31,8 @@ dependencies {
     shadow "net.kyori:adventure-text-serializer-gson:4.9.0"
     implementation 'de.maxhenkel.configbuilder:configbuilder:1.0.0'
     shadow 'de.maxhenkel.configbuilder:configbuilder:1.0.0'
+
+    implementation "co.aikar:acf-paper:0.5.1-SNAPSHOT"
 }
 
 repositories {
@@ -42,6 +44,7 @@ repositories {
         url = 'https://maven.maxhenkel.de/repository/public'
     }
     maven { url "https://repo.dmulloy2.net/repository/public/" }
+    maven { url = "https://repo.aikar.co/content/groups/aikar/" }
 }
 
 task copyJarToServer {
@@ -56,7 +59,7 @@ task copyJarToServer {
     }
 }
 
-build.finalizedBy(copyJarToServer)
+tasks.build.finalizedBy(tasks.copyJarToServer)
 
 task runServer {
     doLast {
@@ -72,7 +75,7 @@ task runServer {
     }
 }
 
-build.dependsOn(shadowJar)
+tasks.build.dependsOn tasks.shadowJar
 
 runServer.dependsOn(build)
 
@@ -82,4 +85,7 @@ shadowJar {
     relocate 'net.kyori', "de.maxhenkel.voicechat.net.kyori"
     relocate 'com.google.gson', "de.maxhenkel.voicechat.gson"
     relocate 'de.maxhenkel.configbuilder', "de.maxhenkel.voicechat.configbuilder"
+
+    relocate 'co.aikar.commands', 'shadded.acf'
+    relocate 'co.aikar.locales', 'shadded.locales'
 }
