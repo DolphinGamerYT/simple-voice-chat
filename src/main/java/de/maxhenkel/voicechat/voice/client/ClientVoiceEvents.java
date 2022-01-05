@@ -165,7 +165,7 @@ public class ClientVoiceEvents {
                     renderIcon(stack, MICROPHONE_MUTED_ICON);
                     break;
                 case SPECTATOR:
-                    renderIcon(stack, SPEAKER_ICON);
+                    renderIcon(stack, MICROPHONE_SPECTATOR_ICON);
                 default:
                     if (playerStateManager.isMuted() && VoicechatClient.CLIENT_CONFIG.microphoneActivationType.get().equals(MicrophoneActivationType.VOICE)) {
                         renderIcon(stack, MICROPHONE_OFF_ICON);
