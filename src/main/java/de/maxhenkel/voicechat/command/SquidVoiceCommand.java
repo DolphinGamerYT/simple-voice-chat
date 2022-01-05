@@ -80,6 +80,7 @@ public class SquidVoiceCommand extends BaseCommand {
     public void onGlobalmute(CommandSender sender, boolean bool) {
         Voicechat.SERVER.getVoiceRestrictions().setAllMuted(bool);
         sender.sendMessage(this.prefix + "§eSe ha " + (bool ? "§cmuteado" : "§adesmuteado") + " §eel voice chat.");
+        Bukkit.getOnlinePlayers().forEach(p -> Voicechat.SERVER.updateIconStatus(p));
     }
 
     @Subcommand("mute")
@@ -94,6 +95,7 @@ public class SquidVoiceCommand extends BaseCommand {
 
         Voicechat.SERVER.getVoiceRestrictions().addMutedPlayer(player.getUniqueId());
         sender.sendMessage(this.prefix + "§cJugador " + player.getName() + " muteado.");
+        Voicechat.SERVER.updateIconStatus(player);
     }
 
     @Subcommand("unmute")
@@ -108,6 +110,7 @@ public class SquidVoiceCommand extends BaseCommand {
 
         Voicechat.SERVER.getVoiceRestrictions().removeMutedPlayer(player.getUniqueId());
         sender.sendMessage(this.prefix + "§aJugador " + player.getName() + " desmuteado.");
+        Voicechat.SERVER.updateIconStatus(player);
     }
 
     @Subcommand("speaker")
@@ -121,6 +124,7 @@ public class SquidVoiceCommand extends BaseCommand {
             Voicechat.SERVER.getVoiceRestrictions().removeSpeaker(player.getUniqueId());
             player.sendMessage(this.prefix + "§cYa no eres speaker.");
         }
+        Voicechat.SERVER.updateIconStatus(player);
     }
 
 }

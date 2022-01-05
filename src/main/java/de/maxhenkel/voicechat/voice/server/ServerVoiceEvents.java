@@ -4,6 +4,7 @@ import de.maxhenkel.voicechat.Voicechat;
 import de.maxhenkel.voicechat.command.VoiceChatCommands;
 import de.maxhenkel.voicechat.models.VoiceRestrictions;
 import de.maxhenkel.voicechat.net.DistancePacket;
+import de.maxhenkel.voicechat.net.IconPacket;
 import de.maxhenkel.voicechat.net.NetManager;
 import de.maxhenkel.voicechat.net.SecretPacket;
 import org.bukkit.entity.Player;
@@ -46,6 +47,22 @@ public class ServerVoiceEvents implements Listener {
 
     public void sendDistanceConfig(Player player, double distance, double fadeDistance) {
         NetManager.sendToClient(player, new DistancePacket(distance, fadeDistance));
+    }
+
+    public void updateIconStatus(Player player) {
+        IconPacket.IconStatus status = IconPacket.IconStatus.NORMAL;
+
+        if (this.voiceRestrictions.isSpeaker(player)) {
+            status = IconPacket.IconStatus.SPEAKER;
+        } else if (!player.hasPermission("squidvoice.bypass")) {
+            if (this.voiceRestrictions.isAllMuted()) {
+                status = IconPacket.IconStatus.GLOBALMUTED;
+            } else if (this.voiceRestrictions.isPlayerMuted(player.getUniqueId())) {
+                status = IconPacket.IconStatus.MUTED;
+            }
+        }
+
+        NetManager.sendToClient(player, new IconPacket(status));
     }
 
     @EventHandler

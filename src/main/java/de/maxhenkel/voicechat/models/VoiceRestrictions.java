@@ -52,6 +52,10 @@ public class VoiceRestrictions {
         this.mutedPlayers.remove(uuid);
     }
 
+    public boolean isPlayerMuted(UUID uuid) {
+        return this.mutedPlayers.contains(uuid);
+    }
+
     public void addSpeaker(UUID uuid) {
         this.speakers.add(uuid);
     }
