@@ -2,6 +2,7 @@ package de.maxhenkel.voicechat.voice.server;
 
 import de.maxhenkel.voicechat.Voicechat;
 import de.maxhenkel.voicechat.command.VoiceChatCommands;
+import de.maxhenkel.voicechat.models.VoiceRestrictions;
 import de.maxhenkel.voicechat.net.NetManager;
 import de.maxhenkel.voicechat.net.SecretPacket;
 import org.bukkit.entity.Player;
@@ -15,8 +16,12 @@ public class ServerVoiceEvents implements Listener {
 
     private Server server;
 
+    // Dolphln SquidGame Added Vars
+    private VoiceRestrictions voiceRestrictions;
+
     public ServerVoiceEvents(org.bukkit.Server mcServer) {
-        server = new Server(Voicechat.SERVER_CONFIG.voiceChatPort.get(), mcServer);
+        this.voiceRestrictions = new VoiceRestrictions();
+        server = new Server(Voicechat.SERVER_CONFIG.voiceChatPort.get(), mcServer, voiceRestrictions);
         server.start();
     }
 
@@ -54,5 +59,9 @@ public class ServerVoiceEvents implements Listener {
 
     public Server getServer() {
         return server;
+    }
+
+    public VoiceRestrictions getVoiceRestrictions() {
+        return voiceRestrictions;
     }
 }

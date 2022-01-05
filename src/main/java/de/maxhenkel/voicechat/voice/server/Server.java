@@ -3,6 +3,7 @@ package de.maxhenkel.voicechat.voice.server;
 import de.maxhenkel.voicechat.Voicechat;
 import de.maxhenkel.voicechat.command.VoiceChatCommands;
 import de.maxhenkel.voicechat.debug.CooldownTimer;
+import de.maxhenkel.voicechat.models.VoiceRestrictions;
 import de.maxhenkel.voicechat.voice.common.*;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -36,7 +37,9 @@ public class Server extends Thread {
     private PingManager pingManager;
     private PlayerStateManager playerStateManager;
 
-    public Server(int port, org.bukkit.Server server) {
+    private VoiceRestrictions restrictions;
+
+    public Server(int port, org.bukkit.Server server, VoiceRestrictions voiceRestrictions) {
         this.port = port;
         this.server = server;
         connections = new HashMap<>();
@@ -44,6 +47,9 @@ public class Server extends Thread {
         packetQueue = new LinkedBlockingQueue<>();
         pingManager = new PingManager(this);
         playerStateManager = new PlayerStateManager();
+
+        this.restrictions = voiceRestrictions;
+
         setDaemon(true);
         setName("VoiceChatServerThread");
         processThread = new ProcessThread();
@@ -188,10 +194,12 @@ public class Server extends Thread {
                         if (player == null) {
                             continue;
                         }
-                        if (!player.hasPermission(VoiceChatCommands.SPEAK_PERMISSION)) {
-                            CooldownTimer.run("muted-" + playerUUID, () -> {
+                        //if (!player.hasPermission(VoiceChatCommands.SPEAK_PERMISSION)) {
+                        if (!restrictions.checkPlayer(player)) {
+                            // TODO: Decide if sending message when players are muted and trying to talk
+                            /*CooldownTimer.run("muted-" + playerUUID, () -> {
                                 player.sendMessage(Voicechat.translate("no_speak_permission"));
-                            });
+                            });*/
                             continue;
                         }
                         processMicPacket(player, packet);
