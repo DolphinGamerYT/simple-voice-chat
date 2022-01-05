@@ -32,7 +32,7 @@ public class VoiceChatScreen extends VoiceChatScreenBase {
     private HoverArea recordingHoverArea;
 
     public VoiceChatScreen() {
-        super(new TranslatableComponent("gui.voicechat.voice_chat.title"), 195, 76);
+        super(/*new TranslatableComponent("gui.voicechat.voice_chat.title")*/new TranslatableComponent(""), 195, 76);
     }
 
     @Override
@@ -42,7 +42,16 @@ public class VoiceChatScreen extends VoiceChatScreenBase {
         ClientPlayerStateManager stateManager = VoicechatClient.CLIENT.getPlayerStateManager();
         @Nullable Client client = VoicechatClient.CLIENT.getClient();
 
-        mute = new ToggleImageButton(guiLeft + 6, guiTop + ySize - 6 - 20, MICROPHONE, stateManager::isMuted, button -> {
+        int xSettings = 75;
+        int ySettings = 20;
+        Button settings = new Button(guiLeft + (xSize/2) - (xSettings/2), guiTop + (ySize/2) - (ySettings/2), 75, 20, new TextComponent("Settings"), button -> {
+            minecraft.setScreen(new VoiceChatSettingsScreen());
+        });
+        addButton(settings);
+
+        //mute = new ToggleImageButton(guiLeft + 6, guiTop + ySize - 6 - 20, MICROPHONE, stateManager::isMuted, button -> {
+        int xyMic = 16;
+        mute = new ToggleImageButton(guiLeft + (xSize/2) - (xyMic/2) - (xSettings/2) - 16, guiTop + (ySize/2) - (xyMic/2) -2, MICROPHONE, stateManager::isMuted, button -> {
             stateManager.setMuted(!stateManager.isMuted());
         }, (button, matrices, mouseX, mouseY) -> {
             renderTooltip(matrices, Collections.singletonList(new TranslatableComponent("message.voicechat.mute_microphone").getVisualOrderText()), mouseX, mouseY);
@@ -75,11 +84,6 @@ public class VoiceChatScreen extends VoiceChatScreenBase {
             renderTooltip(matrices, Collections.singletonList(new TranslatableComponent("message.voicechat.hide_icons").getVisualOrderText()), mouseX, mouseY);
         });
         addButton(hide);*/
-
-        Button settings = new Button(guiLeft + 6, guiTop + 6 + 15, 75, 20, new TextComponent("Settings"), button -> {
-            minecraft.setScreen(new VoiceChatSettingsScreen());
-        });
-        addButton(settings);
 
         /*Button group = new Button(guiLeft + xSize - 6 - 75 + 1, guiTop + 6 + 15, 75, 20, new TextComponent("Group"), button -> {
             if (stateManager.isInGroup()) {

@@ -203,9 +203,9 @@ public class ClientVoiceEvents {
             minecraft.setScreen(new VoiceChatSettingsScreen());
         }
 
-        /*if (VoicechatClient.KEY_PTT.consumeClick()) {
+        if (VoicechatClient.KEY_PTT.consumeClick()) {
             checkConnected();
-        }*/
+        }
 
         if (VoicechatClient.KEY_MUTE.consumeClick() && checkConnected()) {
             playerStateManager.setMuted(!playerStateManager.isMuted());
