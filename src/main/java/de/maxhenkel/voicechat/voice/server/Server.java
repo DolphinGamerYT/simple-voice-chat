@@ -5,6 +5,7 @@ import de.maxhenkel.voicechat.command.VoiceChatCommands;
 import de.maxhenkel.voicechat.debug.CooldownTimer;
 import de.maxhenkel.voicechat.models.VoiceRestrictions;
 import de.maxhenkel.voicechat.voice.common.*;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
@@ -17,13 +18,11 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.security.InvalidKeyException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class Server extends Thread {
 
@@ -267,8 +266,8 @@ public class Server extends Thread {
 
         NetworkMessage soundMessage = new NetworkMessage(soundPacket);
 
-        ServerWorldUtils.getPlayersInRange(player.getWorld(), player.getLocation(), distance, p -> !p.getUniqueId().equals(player.getUniqueId()))
-                .parallelStream()
+        Collection<Player> players = this.restrictions.isSpeaker(player) ? Bukkit.getOnlinePlayers().stream().collect(Collectors.toList()) : ServerWorldUtils.getPlayersInRange(player.getWorld(), player.getLocation(), distance, p -> !p.getUniqueId().equals(player.getUniqueId()));
+        players.parallelStream()
                 .map(p -> playerStateManager.getState(p.getUniqueId()))
                 .filter(Objects::nonNull)
                 .filter(s -> !s.isDisabled() && !s.isDisconnected()) // Filter out players that disabled the voice chat
@@ -282,6 +281,7 @@ public class Server extends Thread {
                         e.printStackTrace();
                     }
                 });
+
     }
 
     private void sendKeepAlives() throws Exception {
