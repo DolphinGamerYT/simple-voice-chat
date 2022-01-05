@@ -264,6 +264,8 @@ public class Server extends Thread {
             soundPacket = new PlayerSoundPacket(player.getUniqueId(), packet.getData(), packet.getSequenceNumber());
         }*/
 
+        if (player.getGameMode().equals(GameMode.SPECTATOR) && !player.hasPermission("squidvoice.bypass")) return;
+
         if (this.restrictions.isSpeaker(player)) {
             soundPacket = new LocationSoundPacket(player.getUniqueId(), player.getEyeLocation(), packet.getData(), packet.getSequenceNumber());
         } else {
