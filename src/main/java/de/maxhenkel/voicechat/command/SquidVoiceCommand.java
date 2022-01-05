@@ -3,6 +3,7 @@ package de.maxhenkel.voicechat.command;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import de.maxhenkel.voicechat.Voicechat;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -12,13 +13,13 @@ public class SquidVoiceCommand extends BaseCommand {
 
     private final String prefix;
 
-    private double divisor;
+    private double fadeDistance;
     private double distance;
 
     public SquidVoiceCommand() {
-        this.prefix = "§8[§9SquidVoice§8] §r";
+        this.prefix = "§0[§5SquidVoice§0] §r";
 
-        this.divisor = Voicechat.SERVER_CONFIG.voiceChatFadeDistance.get();
+        this.fadeDistance = Voicechat.SERVER_CONFIG.voiceChatFadeDistance.get();
         this.distance = Voicechat.SERVER_CONFIG.voiceChatDistance.get();
     }
 
@@ -38,27 +39,36 @@ public class SquidVoiceCommand extends BaseCommand {
 
     @Subcommand("distance")
     @CommandCompletion("@nothing")
-    @Syntax("<distance>")
-    public void onDistance(CommandSender sender, Double distance) {
+    @Syntax("[distance]")
+    public void onDistance(CommandSender sender, @Optional Double distance) {
+        if (distance == null) {
+            sender.sendMessage(this.prefix + "§eDistancia actual: " + this.distance);
+            return;
+        }
+
         this.distance = distance;
         this.updateVolumes();
         sender.sendMessage(this.prefix + "§eDistancia actualizada a " + this.distance);
     }
 
-    @Subcommand("divisor")
+    @Subcommand("fade-distance")
     @CommandCompletion("@nothing")
-    @Syntax("<divisor>")
-    public void onDivisor(CommandSender sender, Double divisor) {
-        this.divisor = divisor;
+    @Syntax("[fadeDistance]")
+    public void onDivisor(CommandSender sender, @Optional Double fadeDistance) {
+        if (fadeDistance == null) {
+            sender.sendMessage(this.prefix + "§eFade distance actual: " + this.fadeDistance);
+            return;
+        }
+
+        this.fadeDistance = fadeDistance;
         this.updateVolumes();
-        sender.sendMessage(this.prefix + "§eDivisor actualizado a " + this.divisor);
+        sender.sendMessage(this.prefix + "§eFade distance actualizado a " + this.fadeDistance);
     }
 
     private void updateVolumes() {
-        double d = (this.distance / divisor);
         Voicechat.SERVER_CONFIG.voiceChatDistance.set(this.distance);
         Voicechat.SERVER_CONFIG.voiceChatDistance.save();
-        Voicechat.SERVER_CONFIG.voiceChatFadeDistance.set(this.distance - d);
+        Voicechat.SERVER_CONFIG.voiceChatFadeDistance.set(this.fadeDistance);
         Voicechat.SERVER_CONFIG.voiceChatFadeDistance.save();
     }
 
@@ -73,7 +83,13 @@ public class SquidVoiceCommand extends BaseCommand {
     @Subcommand("mute")
     @CommandCompletion("@players")
     @Syntax("<player>")
-    public void onMute(CommandSender sender, Player player) {
+    public void onMute(CommandSender sender, String playerName) {
+        Player player = Bukkit.getPlayer(playerName);
+        if (player == null) {
+            sender.sendMessage(this.prefix + "§cJugador no encontrado.");
+            return;
+        }
+
         Voicechat.SERVER.getVoiceRestrictions().addMutedPlayer(player.getUniqueId());
         sender.sendMessage(this.prefix + "§cJugador " + player.getName() + " muteado.");
     }
@@ -81,7 +97,13 @@ public class SquidVoiceCommand extends BaseCommand {
     @Subcommand("unmute")
     @CommandCompletion("@players")
     @Syntax("<player>")
-    public void onUnmute(CommandSender sender, Player player) {
+    public void onUnmute(CommandSender sender, String playerName) {
+        Player player = Bukkit.getPlayer(playerName);
+        if (player == null) {
+            sender.sendMessage(this.prefix + "§cJugador no encontrado.");
+            return;
+        }
+
         Voicechat.SERVER.getVoiceRestrictions().removeMutedPlayer(player.getUniqueId());
         sender.sendMessage(this.prefix + "§aJugador " + player.getName() + " desmuteado.");
     }
