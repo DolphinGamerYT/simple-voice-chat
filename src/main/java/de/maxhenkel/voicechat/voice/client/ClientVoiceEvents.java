@@ -34,17 +34,25 @@ import java.util.UUID;
 @Environment(EnvType.CLIENT)
 public class ClientVoiceEvents {
 
-    private static final ResourceLocation MICROPHONE_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/microphone.png");
     private static final ResourceLocation MICROPHONE_OFF_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/microphone_off.png");
     private static final ResourceLocation SPEAKER_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/speaker.png");
     private static final ResourceLocation SPEAKER_OFF_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/speaker_off.png");
     private static final ResourceLocation DISCONNECT_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/disconnected.png");
     private static final ResourceLocation GROUP_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/group.png");
 
+    private static final ResourceLocation MICROPHONE_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/microphone.png");
+    private static final ResourceLocation MICROPHONE_SPEAKER_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/microphone_speaker.png");
+    private static final ResourceLocation MICROPHONE_GLOBALMUTED_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/microphone_globalmuted.png");
+    private static final ResourceLocation MICROPHONE_MUTED_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/microphone_muted.png");
+    private static final ResourceLocation MICROPHONE_SPECTATOR_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/microphone_spectator.png");
+
+
     private Client client;
     private ClientPlayerStateManager playerStateManager;
     private PTTKeyHandler pttKeyHandler;
     private Minecraft minecraft;
+
+    private IconPacket.IconStatus iconStatus;
 
     public ClientVoiceEvents() {
         playerStateManager = new ClientPlayerStateManager();
@@ -81,6 +89,10 @@ public class ClientVoiceEvents {
             this.client.setVoiceChatDistance(packet.getVoiceChatDistance());
             this.client.setVoiceChatFadeDistance(packet.getVoiceChatFadeDistance());
             Voicechat.LOGGER.info("Distance Voicechat received. Distance: " + packet.getVoiceChatDistance() + " Fade: " + packet.getVoiceChatFadeDistance());
+        });
+
+        NetManager.registerClientReceiver(IconPacket.class, (client, handler, responseSender, packet) -> {
+            this.iconStatus = packet.getIconStatus();
         });
     }
 
@@ -144,10 +156,25 @@ public class ClientVoiceEvents {
             renderIcon(stack, DISCONNECT_ICON);
         } else if (playerStateManager.isDisabled()) {
             renderIcon(stack, SPEAKER_OFF_ICON);
-        } else if (playerStateManager.isMuted() && VoicechatClient.CLIENT_CONFIG.microphoneActivationType.get().equals(MicrophoneActivationType.VOICE)) {
-            renderIcon(stack, MICROPHONE_OFF_ICON);
-        } else if (client != null && client.getMicThread() != null && client.getMicThread().isTalking()) {
-            renderIcon(stack, MICROPHONE_ICON);
+        } else {
+            switch (this.iconStatus) {
+                case GLOBALMUTED:
+                    renderIcon(stack, MICROPHONE_GLOBALMUTED_ICON);
+                    break;
+                case MUTED:
+                    renderIcon(stack, MICROPHONE_MUTED_ICON);
+                    break;
+                case SPECTATOR:
+                    renderIcon(stack, SPEAKER_ICON);
+                default:
+                    if (playerStateManager.isMuted() && VoicechatClient.CLIENT_CONFIG.microphoneActivationType.get().equals(MicrophoneActivationType.VOICE)) {
+                        renderIcon(stack, MICROPHONE_OFF_ICON);
+                    } else if (client != null && client.getMicThread() != null && client.getMicThread().isTalking()) {
+                        renderIcon(stack, iconStatus == IconPacket.IconStatus.SPEAKER ? MICROPHONE_SPEAKER_ICON : MICROPHONE_ICON);
+                    }
+                    break;
+            }
+
         }
 
         if (playerStateManager.isInGroup() && VoicechatClient.CLIENT_CONFIG.showGroupHUD.get()) {
