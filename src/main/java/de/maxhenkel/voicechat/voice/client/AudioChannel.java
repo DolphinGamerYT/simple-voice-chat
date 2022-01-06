@@ -176,6 +176,9 @@ public class AudioChannel extends Thread {
         } else if (packet instanceof LocationSoundPacket) {
             LocationSoundPacket p = (LocationSoundPacket) packet;
             stereo = convertLocationalPacketToStereo(p.getLocation(), monoData);
+        } else if (packet instanceof SpeakerSoundPacket) {
+            SpeakerSoundPacket p = (SpeakerSoundPacket) packet;
+            stereo = Utils.convertToStereo(monoData, 1, 1);
         }
 
         gainControl.setValue(Math.min(Math.max(Utils.percentageToDB(VoicechatClient.CLIENT_CONFIG.voiceChatVolume.get().floatValue() * (float) VoicechatClient.VOLUME_CONFIG.getVolume(uuid)), gainControl.getMinimum()), gainControl.getMaximum()));
