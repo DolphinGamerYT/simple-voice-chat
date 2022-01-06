@@ -94,6 +94,7 @@ public class ClientVoiceEvents {
         NetManager.registerClientReceiver(IconPacket.class, (client, handler, responseSender, packet) -> {
             this.iconStatus = packet.getIconStatus();
         });
+        this.iconStatus = IconPacket.IconStatus.NORMAL;
     }
 
     public void authenticate(UUID playerUUID, SecretPacket secretPacket) {
