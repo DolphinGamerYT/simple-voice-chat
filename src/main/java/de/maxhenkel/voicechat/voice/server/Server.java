@@ -267,28 +267,42 @@ public class Server extends Thread {
         if (player.getGameMode().equals(GameMode.SPECTATOR) && !player.hasPermission("squidvoice.bypass")) return;
 
         if (this.restrictions.isSpeaker(player)) {
-            soundPacket = new LocationSoundPacket(player.getUniqueId(), player.getEyeLocation(), packet.getData(), packet.getSequenceNumber());
+            soundPacket = new SpeakerSoundPacket(player.getUniqueId(), player.getEyeLocation(), packet.getData(), packet.getSequenceNumber());
         } else {
             soundPacket = new PlayerSoundPacket(player.getUniqueId(), packet.getData(), packet.getSequenceNumber());
         }
         NetworkMessage soundMessage = new NetworkMessage(soundPacket);
 
-        Collection<Player> players = this.restrictions.isSpeaker(player) ? Bukkit.getOnlinePlayers().stream().filter(p -> !p.getUniqueId().equals(player.getUniqueId())).collect(Collectors.toList()) : ServerWorldUtils.getPlayersInRange(player.getWorld(), player.getLocation(), distance, p -> !p.getUniqueId().equals(player.getUniqueId()));
-        players.parallelStream()
-                .map(p -> playerStateManager.getState(p.getUniqueId()))
-                .filter(Objects::nonNull)
-                .filter(s -> !s.isDisabled() && !s.isDisconnected()) // Filter out players that disabled the voice chat
-                .filter(s -> !(s.hasGroup() && s.getGroup().equals(group))) // Filter out players that are in the same group
-                .map(p -> connections.get(p.getGameProfile().getId()))
-                .filter(Objects::nonNull)
-                .forEach(clientConnection -> {
-                    try {
-                        clientConnection.send(this, soundMessage);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-
+        if (!this.restrictions.isSpeaker(player)) {
+            ServerWorldUtils.getPlayersInRange(player.getWorld(), player.getLocation(), distance, p -> !p.getUniqueId().equals(player.getUniqueId())).parallelStream()
+                    .map(p -> playerStateManager.getState(p.getUniqueId()))
+                    .filter(Objects::nonNull)
+                    // .filter(s -> !s.isDisabled() && !s.isDisconnected()) Filter out players that disabled the voice chat
+                    // .filter(s -> !(s.hasGroup() && s.getGroup().equals(group))) Filter out players that are in the same group
+                    .map(p -> connections.get(p.getGameProfile().getId()))
+                    .filter(Objects::nonNull)
+                    .forEach(clientConnection -> {
+                        try {
+                            clientConnection.send(this, soundMessage);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+        } else {
+            Bukkit.getOnlinePlayers().parallelStream()
+                    .filter(p -> !p.getUniqueId().equals(player.getUniqueId()))
+                    .map(p -> playerStateManager.getState(p.getUniqueId()))
+                    .filter(Objects::nonNull)
+                    .map(p -> connections.get(p.getGameProfile().getId()))
+                    .filter(Objects::nonNull)
+                    .forEach(clientConnection -> {
+                        try {
+                            clientConnection.send(this, soundMessage);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+        }
     }
 
     private void sendKeepAlives() throws Exception {
