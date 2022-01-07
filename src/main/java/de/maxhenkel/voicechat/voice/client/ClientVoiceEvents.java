@@ -10,6 +10,7 @@ import de.maxhenkel.voicechat.debug.DebugReport;
 import de.maxhenkel.voicechat.events.*;
 import de.maxhenkel.voicechat.gui.*;
 import de.maxhenkel.voicechat.net.*;
+import de.maxhenkel.voicechat.voice.common.IconChangePacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -20,6 +21,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -52,7 +54,7 @@ public class ClientVoiceEvents {
     private PTTKeyHandler pttKeyHandler;
     private Minecraft minecraft;
 
-    private IconPacket.IconStatus iconStatus;
+    public IconChangePacket.IconStatus iconStatus;
 
     public ClientVoiceEvents() {
         playerStateManager = new ClientPlayerStateManager();
@@ -85,16 +87,7 @@ public class ClientVoiceEvents {
             return;
         });
 
-        NetManager.registerClientReceiver(DistancePacket.class, (client, handler, responseSender, packet) -> {
-            this.client.setVoiceChatDistance(packet.getVoiceChatDistance());
-            this.client.setVoiceChatFadeDistance(packet.getVoiceChatFadeDistance());
-            Voicechat.LOGGER.info("Distance Voicechat received. Distance: " + packet.getVoiceChatDistance() + " Fade: " + packet.getVoiceChatFadeDistance());
-        });
-
-        NetManager.registerClientReceiver(IconPacket.class, (client, handler, responseSender, packet) -> {
-            this.iconStatus = packet.getIconStatus();
-        });
-        this.iconStatus = IconPacket.IconStatus.NORMAL;
+        this.iconStatus = IconChangePacket.IconStatus.NORMAL;
     }
 
     public void authenticate(UUID playerUUID, SecretPacket secretPacket) {
@@ -171,7 +164,7 @@ public class ClientVoiceEvents {
                     if (playerStateManager.isMuted() && VoicechatClient.CLIENT_CONFIG.microphoneActivationType.get().equals(MicrophoneActivationType.VOICE)) {
                         renderIcon(stack, MICROPHONE_OFF_ICON);
                     } else if (client != null && client.getMicThread() != null && client.getMicThread().isTalking()) {
-                        renderIcon(stack, iconStatus == IconPacket.IconStatus.SPEAKER ? MICROPHONE_SPEAKER_ICON : MICROPHONE_ICON);
+                        renderIcon(stack, iconStatus == IconChangePacket.IconStatus.SPEAKER ? MICROPHONE_SPEAKER_ICON : MICROPHONE_ICON);
                     }
                     break;
             }

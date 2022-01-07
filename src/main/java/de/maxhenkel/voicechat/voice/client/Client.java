@@ -201,6 +201,13 @@ public class Client extends Thread {
                 } else if (in.getPacket() instanceof KeepAlivePacket) {
                     lastKeepAlive = System.currentTimeMillis();
                     sendToServer(new NetworkMessage(new KeepAlivePacket()));
+                } else if (in.getPacket() instanceof DistanceChangePacket) {
+                    DistanceChangePacket packet = (DistanceChangePacket) in.getPacket();
+                    this.setVoiceChatDistance(packet.getVoiceChatDistance());
+                    this.setVoiceChatFadeDistance(packet.getVoiceChatFadeDistance());
+                } else if (in.getPacket() instanceof IconChangePacket) {
+                    IconChangePacket packet = (IconChangePacket) in.getPacket();
+                    VoicechatClient.CLIENT.iconStatus = packet.getIconStatus();
                 }
             }
         } catch (Exception e) {

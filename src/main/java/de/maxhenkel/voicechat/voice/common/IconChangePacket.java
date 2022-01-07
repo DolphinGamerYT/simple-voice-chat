@@ -1,12 +1,9 @@
-package de.maxhenkel.voicechat.net;
+package de.maxhenkel.voicechat.voice.common;
 
-import de.maxhenkel.voicechat.Voicechat;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 
-public class IconPacket implements Packet<IconPacket> {
 
-    public static final ResourceLocation SECRET = new ResourceLocation(Voicechat.MODID, "secret");
+public class IconChangePacket implements Packet<IconChangePacket> {
 
     public enum IconStatus {
         NORMAL(0),
@@ -37,12 +34,12 @@ public class IconPacket implements Packet<IconPacket> {
 
     private IconStatus iconStatus;
 
-    public IconPacket() {
-
+    public IconChangePacket(IconStatus iconStatus) {
+        this.iconStatus = iconStatus;
     }
 
-    public IconPacket(IconStatus iconStatus) {
-        this.iconStatus = iconStatus;
+    public IconChangePacket() {
+
     }
 
     public IconStatus getIconStatus() {
@@ -50,19 +47,14 @@ public class IconPacket implements Packet<IconPacket> {
     }
 
     @Override
-    public ResourceLocation getID() {
-        return SECRET;
-    }
-
-    @Override
-    public IconPacket fromBytes(FriendlyByteBuf buf) {
-        this.iconStatus = IconStatus.fromId(buf.readInt());
-        return this;
+    public IconChangePacket fromBytes(FriendlyByteBuf buf) {
+        IconChangePacket iconPacket = new IconChangePacket();
+        iconPacket.iconStatus = IconStatus.fromId(buf.readInt());
+        return iconPacket;
     }
 
     @Override
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeInt(this.iconStatus.getId());
     }
-
 }
