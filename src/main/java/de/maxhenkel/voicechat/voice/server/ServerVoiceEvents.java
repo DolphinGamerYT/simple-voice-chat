@@ -35,10 +35,10 @@ public class ServerVoiceEvents implements Listener {
             return;
         }
 
-        if (!player.hasPermission(VoiceChatCommands.CONNECT_PERMISSION)) {
+        /*if (!player.hasPermission(VoiceChatCommands.CONNECT_PERMISSION)) {
             Voicechat.LOGGER.info("Player {} has no permission to connect to the voice chat", player.getName());
             return;
-        }
+        }*/
 
         UUID secret = server.getSecret(player.getUniqueId());
 
