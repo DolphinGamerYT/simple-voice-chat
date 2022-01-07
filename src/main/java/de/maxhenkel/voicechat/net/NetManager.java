@@ -23,11 +23,14 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class NetManager {
 
     private static PacketAdapter packetAdapter;
+    public static List<UUID> vcPlayers = new ArrayList<>();
 
     public static void onEnable() {
         packetAdapter = new PacketAdapter(Voicechat.INSTANCE, ListenerPriority.HIGHEST, PacketType.Login.Client.START, PacketType.Login.Client.CUSTOM_PAYLOAD, PacketType.Play.Client.CUSTOM_PAYLOAD) {
@@ -112,6 +115,7 @@ public class NetManager {
             disconnect(player, getIncompatibleMessage(packet.getCompatibilityVersion()));
             return;
         }
+        vcPlayers.add(player.getUniqueId());
         Voicechat.SERVER.initializePlayerConnection(player);
     }
 

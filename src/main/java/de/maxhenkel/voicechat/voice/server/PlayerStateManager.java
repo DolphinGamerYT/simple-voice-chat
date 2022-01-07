@@ -5,6 +5,7 @@ import de.maxhenkel.voicechat.net.NetManager;
 import de.maxhenkel.voicechat.net.PlayerStatePacket;
 import de.maxhenkel.voicechat.net.PlayerStatesPacket;
 import de.maxhenkel.voicechat.voice.common.PlayerState;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,6 +36,12 @@ public class PlayerStateManager implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         notifyPlayer(event.getPlayer());
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Voicechat.INSTANCE, () -> {
+            if (!NetManager.vcPlayers.contains(event.getPlayer().getUniqueId())) {
+                event.getPlayer().kickPlayer("§cNo tienes el chat de voz activado.");
+            }
+            NetManager.vcPlayers.remove(event.getPlayer().getUniqueId());
+        }, 4*20L);
     }
 
     @EventHandler
