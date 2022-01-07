@@ -70,6 +70,9 @@ public class NetworkMessage {
         packetRegistry.put((byte) 5, AuthenticateAckPacket.class);
         packetRegistry.put((byte) 6, PingPacket.class);
         packetRegistry.put((byte) 7, KeepAlivePacket.class);
+        packetRegistry.put((byte) 8, SpeakerSoundPacket.class);
+        packetRegistry.put((byte) 9, DistanceChangePacket.class);
+        packetRegistry.put((byte) 10, IconChangePacket.class);
     }
 
     public static UnprocessedNetworkMessage readPacket(DatagramSocket socket) throws IOException {

@@ -3,10 +3,12 @@ package de.maxhenkel.voicechat.voice.server;
 import de.maxhenkel.voicechat.Voicechat;
 import de.maxhenkel.voicechat.command.VoiceChatCommands;
 import de.maxhenkel.voicechat.models.VoiceRestrictions;
-import de.maxhenkel.voicechat.net.DistancePacket;
-import de.maxhenkel.voicechat.net.IconPacket;
 import de.maxhenkel.voicechat.net.NetManager;
 import de.maxhenkel.voicechat.net.SecretPacket;
+import de.maxhenkel.voicechat.voice.common.DistanceChangePacket;
+import de.maxhenkel.voicechat.voice.common.IconChangePacket;
+import de.maxhenkel.voicechat.voice.common.NetworkMessage;
+import de.maxhenkel.voicechat.voice.common.PlayerState;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -47,25 +49,35 @@ public class ServerVoiceEvents implements Listener {
     }
 
     public void sendDistanceConfig(Player player, double distance, double fadeDistance) {
-        NetManager.sendToClient(player, new DistancePacket(distance, fadeDistance));
+        this.sendPacket(player, new NetworkMessage(new DistanceChangePacket(distance, fadeDistance)));
     }
 
     public void updateIconStatus(Player player) {
-        IconPacket.IconStatus status = IconPacket.IconStatus.NORMAL;
+        IconChangePacket.IconStatus status = IconChangePacket.IconStatus.NORMAL;
 
         if (this.voiceRestrictions.isSpeaker(player)) {
-            status = IconPacket.IconStatus.SPEAKER;
+            status = IconChangePacket.IconStatus.SPEAKER;
         } else if (!player.hasPermission("squidvoice.bypass")) {
             if (this.voiceRestrictions.isAllMuted()) {
-                status = IconPacket.IconStatus.GLOBALMUTED;
+                status = IconChangePacket.IconStatus.GLOBALMUTED;
             } else if (this.voiceRestrictions.isPlayerMuted(player.getUniqueId())) {
-                status = IconPacket.IconStatus.MUTED;
+                status = IconChangePacket.IconStatus.MUTED;
             } else if (player.getGameMode().equals(GameMode.SPECTATOR)) {
-                status = IconPacket.IconStatus.SPECTATOR;
+                status = IconChangePacket.IconStatus.SPECTATOR;
             }
         }
 
-        NetManager.sendToClient(player, new IconPacket(status));
+        this.sendPacket(player, new NetworkMessage(new IconChangePacket(status)));
+    }
+
+    private void sendPacket(Player player, NetworkMessage message) {
+        PlayerState ps = this.server.getPlayerStateManager().getState(player.getUniqueId());
+        ClientConnection connection = this.server.getConnections().get(ps.getGameProfile().getId());
+        try {
+            connection.send(this.server, message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @EventHandler

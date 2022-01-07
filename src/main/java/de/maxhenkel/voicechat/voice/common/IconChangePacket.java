@@ -1,15 +1,8 @@
-package de.maxhenkel.voicechat.net;
+package de.maxhenkel.voicechat.voice.common;
 
-import com.comphenix.protocol.wrappers.MinecraftKey;
-import de.maxhenkel.voicechat.Voicechat;
-import de.maxhenkel.voicechat.config.ServerConfig;
 import de.maxhenkel.voicechat.util.FriendlyByteBuf;
 
-import java.util.UUID;
-
-public class IconPacket implements Packet<IconPacket> {
-
-    public static final MinecraftKey SECRET = new MinecraftKey(Voicechat.MODID, "secret");
+public class IconChangePacket implements Packet<IconChangePacket> {
 
     public enum IconStatus {
         NORMAL(0),
@@ -40,12 +33,12 @@ public class IconPacket implements Packet<IconPacket> {
 
     private IconStatus iconStatus;
 
-    public IconPacket() {
-
+    public IconChangePacket(IconStatus iconStatus) {
+        this.iconStatus = iconStatus;
     }
 
-    public IconPacket(IconStatus iconStatus) {
-        this.iconStatus = iconStatus;
+    public IconChangePacket() {
+
     }
 
     public IconStatus getIconStatus() {
@@ -53,19 +46,14 @@ public class IconPacket implements Packet<IconPacket> {
     }
 
     @Override
-    public MinecraftKey getID() {
-        return SECRET;
-    }
-
-    @Override
-    public IconPacket fromBytes(FriendlyByteBuf buf) {
-        this.iconStatus = IconStatus.fromId(buf.readInt());
-        return this;
+    public IconChangePacket fromBytes(FriendlyByteBuf buf) {
+        IconChangePacket iconPacket = new IconChangePacket();
+        iconPacket.iconStatus = IconStatus.fromId(buf.readInt());
+        return iconPacket;
     }
 
     @Override
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeInt(this.iconStatus.getId());
     }
-
 }
