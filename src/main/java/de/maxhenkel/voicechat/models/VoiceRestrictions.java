@@ -22,9 +22,9 @@ public class VoiceRestrictions {
     }
 
     public boolean checkPlayer(Player player) {
+        if (this.mutedPlayers.contains(player.getUniqueId())) return false;
         if (player.hasPermission(this.permission)) return true;
         if (this.allMuted) return false;
-        if (this.mutedPlayers.contains(player.getUniqueId())) return false;
         return true;
     }
 
