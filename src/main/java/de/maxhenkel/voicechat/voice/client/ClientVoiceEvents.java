@@ -36,17 +36,14 @@ import java.util.UUID;
 @Environment(EnvType.CLIENT)
 public class ClientVoiceEvents {
 
-    private static final ResourceLocation MICROPHONE_OFF_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/microphone_off.png");
-    private static final ResourceLocation SPEAKER_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/speaker.png");
-    private static final ResourceLocation SPEAKER_OFF_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/speaker_off.png");
+    private static final ResourceLocation SPEAKER_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/mic_nametag.png");
     private static final ResourceLocation DISCONNECT_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/disconnected.png");
-    private static final ResourceLocation GROUP_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/group.png");
-
-    private static final ResourceLocation MICROPHONE_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/microphone.png");
-    private static final ResourceLocation MICROPHONE_SPEAKER_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/microphone_speaker.png");
-    private static final ResourceLocation MICROPHONE_GLOBALMUTED_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/microphone_globalmuted.png");
-    private static final ResourceLocation MICROPHONE_MUTED_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/microphone_muted.png");
-    private static final ResourceLocation MICROPHONE_SPECTATOR_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/microphone_spectator.png");
+    private static final ResourceLocation MICROPHONE_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/mic.png");
+    private static final ResourceLocation MICROPHONE_OFF_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/mic_off.png");
+    private static final ResourceLocation MICROPHONE_SPEAKER_OFF = new ResourceLocation(Voicechat.MODID, "textures/gui/mic_speaker_off.png");
+    private static final ResourceLocation MICROPHONE_SPEAKER_ON = new ResourceLocation(Voicechat.MODID, "textures/gui/mic_speaker.png");
+    private static final ResourceLocation SPEAKER_OFF = new ResourceLocation(Voicechat.MODID, "textures/gui/speaker_off.png");
+    private static final ResourceLocation SPEAKER_ON = new ResourceLocation(Voicechat.MODID, "textures/gui/speaker_on.png");
 
 
     private Client client;
@@ -146,33 +143,23 @@ public class ClientVoiceEvents {
             return;
         }
 
-        if (playerStateManager.isDisconnected()) {
+        if (playerStateManager.isDisconnected() || playerStateManager.isDisabled()) {
             renderIcon(stack, DISCONNECT_ICON);
-        } else if (playerStateManager.isDisabled()) {
-            renderIcon(stack, SPEAKER_OFF_ICON);
         } else {
             switch (this.iconStatus) {
                 case GLOBALMUTED:
-                    renderIcon(stack, MICROPHONE_GLOBALMUTED_ICON);
-                    break;
-                case MUTED:
-                    renderIcon(stack, MICROPHONE_MUTED_ICON);
-                    break;
                 case SPECTATOR:
-                    renderIcon(stack, MICROPHONE_SPECTATOR_ICON);
+                    return;
+                case MUTED:
+                    renderIcon(stack, MICROPHONE_OFF_ICON);
+                    return;
                 default:
                     if (playerStateManager.isMuted() && VoicechatClient.CLIENT_CONFIG.microphoneActivationType.get().equals(MicrophoneActivationType.VOICE)) {
-                        renderIcon(stack, MICROPHONE_OFF_ICON);
+                        renderIcon(stack, iconStatus == IconChangePacket.IconStatus.SPEAKER ? MICROPHONE_SPEAKER_OFF : MICROPHONE_OFF_ICON);
                     } else if (client != null && client.getMicThread() != null && client.getMicThread().isTalking()) {
-                        renderIcon(stack, iconStatus == IconChangePacket.IconStatus.SPEAKER ? MICROPHONE_SPEAKER_ICON : MICROPHONE_ICON);
+                        renderIcon(stack, iconStatus == IconChangePacket.IconStatus.SPEAKER ? MICROPHONE_SPEAKER_ON : MICROPHONE_ICON);
                     }
-                    break;
             }
-
-        }
-
-        if (playerStateManager.isInGroup() && VoicechatClient.CLIENT_CONFIG.showGroupHUD.get()) {
-            GroupChatManager.renderIcons(stack);
         }
     }
 
@@ -285,16 +272,8 @@ public class ClientVoiceEvents {
         Player player = (Player) entity;
 
         if (!minecraft.options.hideGui) {
-            String group = playerStateManager.getGroup(player);
-
             if (client != null && client.getTalkCache().isTalking(player)) {
                 renderPlayerIcon(player, component, SPEAKER_ICON, stack, vertexConsumers, light);
-            } else if (playerStateManager.isPlayerDisconnected(player)) {
-                renderPlayerIcon(player, component, DISCONNECT_ICON, stack, vertexConsumers, light);
-            } else if (group != null && !group.equals(playerStateManager.getGroup())) {
-                renderPlayerIcon(player, component, GROUP_ICON, stack, vertexConsumers, light);
-            } else if (playerStateManager.isPlayerDisabled(player)) {
-                renderPlayerIcon(player, component, SPEAKER_OFF_ICON, stack, vertexConsumers, light);
             }
         }
     }

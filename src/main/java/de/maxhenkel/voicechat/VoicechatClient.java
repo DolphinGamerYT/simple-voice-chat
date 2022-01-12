@@ -43,9 +43,9 @@ public class VoicechatClient implements ClientModInitializer {
     public static ClientConfig CLIENT_CONFIG;
     public static PlayerVolumeConfig VOLUME_CONFIG;
 
-    public static VoiceChatResourcePack CLASSIC_ICONS;
+    /*public static VoiceChatResourcePack CLASSIC_ICONS;
     public static VoiceChatResourcePack WHITE_ICONS;
-    public static VoiceChatResourcePack BLACK_ICONS;
+    public static VoiceChatResourcePack BLACK_ICONS;*/
 
     @Override
     public void onInitializeClient() {
@@ -77,7 +77,7 @@ public class VoicechatClient implements ClientModInitializer {
 
         CLIENT = new ClientVoiceEvents();
 
-        CLASSIC_ICONS = new VoiceChatResourcePack("Classic Icons", "classic_icons");
+        /*CLASSIC_ICONS = new VoiceChatResourcePack("Classic Icons", "classic_icons");
         WHITE_ICONS = new VoiceChatResourcePack("White Icons", "white_icons");
         BLACK_ICONS = new VoiceChatResourcePack("Black Icons", "black_icons");
 
@@ -87,7 +87,7 @@ public class VoicechatClient implements ClientModInitializer {
                     consumer.accept(Pack.create(WHITE_ICONS.getName(), false, () -> WHITE_ICONS, packConstructor, Pack.Position.TOP, PackSource.BUILT_IN));
                     consumer.accept(Pack.create(BLACK_ICONS.getName(), false, () -> BLACK_ICONS, packConstructor, Pack.Position.TOP, PackSource.BUILT_IN));
                 }
-        );
+        );*/
     }
 
     private void fixVolumeConfig() {
