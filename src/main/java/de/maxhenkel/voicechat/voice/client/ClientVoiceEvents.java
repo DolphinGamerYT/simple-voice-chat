@@ -41,6 +41,7 @@ public class ClientVoiceEvents {
     private static final ResourceLocation MICROPHONE_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/mic.png");
     private static final ResourceLocation MICROPHONE_OFF_ICON = new ResourceLocation(Voicechat.MODID, "textures/gui/mic_off.png");
     private static final ResourceLocation MICROPHONE_SPEAKER_OFF = new ResourceLocation(Voicechat.MODID, "textures/gui/mic_speaker_off.png");
+    private static final ResourceLocation MICROPHONE_SPEAKER_NOTSPEAKING = new ResourceLocation(Voicechat.MODID, "textures/gui/mic_speaker_no.png");
     private static final ResourceLocation MICROPHONE_SPEAKER_ON = new ResourceLocation(Voicechat.MODID, "textures/gui/mic_speaker.png");
     private static final ResourceLocation SPEAKER_OFF = new ResourceLocation(Voicechat.MODID, "textures/gui/speaker_off.png");
     private static final ResourceLocation SPEAKER_ON = new ResourceLocation(Voicechat.MODID, "textures/gui/speaker_on.png");
@@ -156,8 +157,12 @@ public class ClientVoiceEvents {
                 default:
                     if (playerStateManager.isMuted() && VoicechatClient.CLIENT_CONFIG.microphoneActivationType.get().equals(MicrophoneActivationType.VOICE)) {
                         renderIcon(stack, iconStatus == IconChangePacket.IconStatus.SPEAKER ? MICROPHONE_SPEAKER_OFF : MICROPHONE_OFF_ICON);
-                    } else if (client != null && client.getMicThread() != null && client.getMicThread().isTalking()) {
-                        renderIcon(stack, iconStatus == IconChangePacket.IconStatus.SPEAKER ? MICROPHONE_SPEAKER_ON : MICROPHONE_ICON);
+                    } else if (client != null && client.getMicThread() != null) {
+                        if (client.getMicThread().isTalking()) {
+                            renderIcon(stack, iconStatus == IconChangePacket.IconStatus.SPEAKER ? MICROPHONE_SPEAKER_ON : MICROPHONE_ICON);
+                        } else if (iconStatus == IconChangePacket.IconStatus.SPEAKER) {
+                            renderIcon(stack, MICROPHONE_SPEAKER_NOTSPEAKING);
+                        }
                     }
             }
         }
