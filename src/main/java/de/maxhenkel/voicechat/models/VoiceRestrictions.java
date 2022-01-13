@@ -2,23 +2,21 @@ package de.maxhenkel.voicechat.models;
 
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class VoiceRestrictions {
 
     private final String permission;
     private final List<UUID> mutedPlayers;
     private boolean allMuted;
-    private final List<UUID> speakers;
+    private final ConcurrentHashMap<UUID, Double> speakers;
 
     public VoiceRestrictions() {
         this.permission = "squidvoice.bypass";
         this.mutedPlayers = Collections.synchronizedList(new ArrayList<>());
         this.allMuted = false;
-        this.speakers = Collections.synchronizedList(new ArrayList<>());
+        this.speakers = new ConcurrentHashMap<>();
     }
 
     public boolean checkPlayer(Player player) {
@@ -29,7 +27,11 @@ public class VoiceRestrictions {
     }
 
     public boolean isSpeaker(Player player) {
-        return this.speakers.contains(player.getUniqueId());
+        return this.speakers.containsKey(player.getUniqueId());
+    }
+
+    public Double getSpeakerDistance(Player player) {
+        return this.speakers.get(player.getUniqueId());
     }
 
     public String getPermission() {
@@ -56,8 +58,8 @@ public class VoiceRestrictions {
         return this.mutedPlayers.contains(uuid);
     }
 
-    public void addSpeaker(UUID uuid) {
-        this.speakers.add(uuid);
+    public void addSpeaker(UUID uuid, Double distance) {
+        this.speakers.put(uuid, distance != null ? distance : -1);
     }
 
     public void removeSpeaker(UUID uuid) {

@@ -61,6 +61,7 @@ public class PlayerStateManager implements Listener {
     }
 
     private void removePlayer(Player player) {
+        Voicechat.SERVER.getVoiceRestrictions().removeSpeaker(player.getUniqueId());
         states.remove(player.getUniqueId());
         broadcastState(new PlayerState(true, true, ((CraftPlayer) player).getProfile())); //TODO maybe remove
     }

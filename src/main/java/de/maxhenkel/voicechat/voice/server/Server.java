@@ -23,6 +23,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Server extends Thread {
 
@@ -265,15 +266,17 @@ public class Server extends Thread {
         }*/
 
         if (player.getGameMode().equals(GameMode.SPECTATOR) && !player.hasPermission("squidvoice.bypass")) return;
+        boolean speaker = this.restrictions.isSpeaker(player);
 
-        if (this.restrictions.isSpeaker(player)) {
+        if (speaker) {
             soundPacket = new SpeakerSoundPacket(player.getUniqueId(), player.getEyeLocation(), packet.getData(), packet.getSequenceNumber());
         } else {
             soundPacket = new PlayerSoundPacket(player.getUniqueId(), packet.getData(), packet.getSequenceNumber());
         }
         NetworkMessage soundMessage = new NetworkMessage(soundPacket);
 
-        if (!this.restrictions.isSpeaker(player)) {
+
+        if (!speaker) {
             ServerWorldUtils.getPlayersInRange(player.getWorld(), player.getLocation(), distance, p -> !p.getUniqueId().equals(player.getUniqueId())).parallelStream()
                     .map(p -> playerStateManager.getState(p.getUniqueId()))
                     .filter(Objects::nonNull)
@@ -289,7 +292,9 @@ public class Server extends Thread {
                         }
                     });
         } else {
-            Bukkit.getOnlinePlayers().parallelStream()
+            Double speakerDistance = this.restrictions.getSpeakerDistance(player);
+            Stream<Player> playersStream = speakerDistance != null && speakerDistance > -1 ? ServerWorldUtils.getPlayersInRange(player.getWorld(), player.getLocation(), speakerDistance, p -> !p.getUniqueId().equals(player.getUniqueId())).parallelStream() : Bukkit.getOnlinePlayers().parallelStream().map(Player::getPlayer);
+            playersStream
                     .filter(p -> !p.getUniqueId().equals(player.getUniqueId()))
                     .map(p -> playerStateManager.getState(p.getUniqueId()))
                     .filter(Objects::nonNull)

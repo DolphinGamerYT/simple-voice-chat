@@ -114,12 +114,17 @@ public class SquidVoiceCommand extends BaseCommand {
     }
 
     @Subcommand("speaker")
-    @CommandCompletion("@bool")
-    @Syntax("<true/false>")
-    public void onSpeaker(Player player, boolean bool) {
+    @CommandCompletion("@bool @nothing")
+    @Syntax("<true/false> [distance]")
+    public void onSpeaker(Player player, boolean bool, @Optional Double distance) {
         if (bool) {
-            Voicechat.SERVER.getVoiceRestrictions().addSpeaker(player.getUniqueId());
-            player.sendMessage(this.prefix + "§aAhora eres speaker.");
+            if (distance == null || distance <= 0) {
+                Voicechat.SERVER.getVoiceRestrictions().addSpeaker(player.getUniqueId(), -1D);
+                player.sendMessage(this.prefix + "§aAhora eres speaker.");
+            } else {
+                Voicechat.SERVER.updateIconStatus(player);
+                player.sendMessage(this.prefix + "§aAhora eres speaker. La distancia es de " + distance + " bloques.");
+            }
         } else {
             Voicechat.SERVER.getVoiceRestrictions().removeSpeaker(player.getUniqueId());
             player.sendMessage(this.prefix + "§cYa no eres speaker.");
