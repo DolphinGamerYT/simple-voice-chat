@@ -65,4 +65,8 @@ public class VoiceRestrictions {
     public void removeSpeaker(UUID uuid) {
         this.speakers.remove(uuid);
     }
+
+    public List<UUID> getMutedPlayers() {
+        return new ArrayList<>(this.mutedPlayers);
+    }
 }

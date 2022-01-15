@@ -7,6 +7,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 @CommandAlias("squidvoice")
 @CommandPermission("squidvoice.command")
 public class SquidVoiceCommand extends BaseCommand {
@@ -130,6 +133,20 @@ public class SquidVoiceCommand extends BaseCommand {
             player.sendMessage(this.prefix + "§cYa no eres speaker.");
         }
         Voicechat.SERVER.updateIconStatus(player);
+    }
+
+    @Subcommand("muted-players")
+    public void onMuted(CommandSender sender) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(this.prefix).append("§eLista de jugadores muteados: ");
+        Voicechat.SERVER.getVoiceRestrictions().getMutedPlayers().forEach(uuid -> {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                builder.append(player.getName()).append(", ");
+            }
+        });
+
+        sender.sendMessage(builder.toString());
     }
 
 }
