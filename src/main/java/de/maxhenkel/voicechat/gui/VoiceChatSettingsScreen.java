@@ -38,6 +38,8 @@ public class VoiceChatSettingsScreen extends VoiceChatScreenBase implements MicT
 
         int y = guiTop + 20;
 
+        addButton(new MicAmplificationSlider(guiLeft + 10, y, xSize - 20, 20));
+        y += 21;
         if (c.getMicThread() != null && c.getMicThread().getDenoiser() != null) {
             addButton(new BooleanConfigButton(guiLeft + 10, y, xSize - 20, 20, VoicechatClient.CLIENT_CONFIG.denoiser, enabled -> {
                 return new TranslatableComponent("message.voicechat.denoiser",
