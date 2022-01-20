@@ -126,6 +126,7 @@ public class SquidVoiceCommand extends BaseCommand {
                 player.sendMessage(this.prefix + "§aAhora eres speaker.");
             } else {
                 Voicechat.SERVER.updateIconStatus(player);
+                Voicechat.SERVER.getVoiceRestrictions().addSpeaker(player.getUniqueId(), distance);
                 player.sendMessage(this.prefix + "§aAhora eres speaker. La distancia es de " + distance + " bloques.");
             }
         } else {
