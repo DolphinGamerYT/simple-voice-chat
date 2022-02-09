@@ -33,6 +33,7 @@ dependencies {
     shadow 'de.maxhenkel.configbuilder:configbuilder:1.0.0'
 
     implementation "co.aikar:acf-paper:0.5.1-SNAPSHOT"
+    shadow "co.aikar:acf-paper:0.5.1-SNAPSHOT"
 }
 
 repositories {
