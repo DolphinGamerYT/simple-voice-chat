@@ -74,6 +74,7 @@ repositories {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
+    implementation 'log4j:log4j:1.2.17'
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     implementation(project(':common')) {

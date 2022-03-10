@@ -7,6 +7,7 @@ import de.maxhenkel.voicechat.Voicechat;
 import de.maxhenkel.voicechat.VoicechatClient;
 import de.maxhenkel.voicechat.intercompatibility.ClientCompatibilityManager;
 import de.maxhenkel.voicechat.voice.common.ClientGroup;
+import de.maxhenkel.voicechat.voice.common.IconChangePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -20,21 +21,29 @@ import net.minecraft.world.entity.player.Player;
 
 public class RenderEvents {
 
-    private static final ResourceLocation MICROPHONE_ICON = new ResourceLocation(Voicechat.MODID, "textures/icons/microphone.png");
     private static final ResourceLocation WHISPER_MICROPHONE_ICON = new ResourceLocation(Voicechat.MODID, "textures/icons/microphone_whisper.png");
-    private static final ResourceLocation MICROPHONE_OFF_ICON = new ResourceLocation(Voicechat.MODID, "textures/icons/microphone_off.png");
-    private static final ResourceLocation SPEAKER_ICON = new ResourceLocation(Voicechat.MODID, "textures/icons/speaker.png");
+    //private static final ResourceLocation SPEAKER_ICON = new ResourceLocation(Voicechat.MODID, "textures/icons/speaker.png");
     private static final ResourceLocation WHISPER_SPEAKER_ICON = new ResourceLocation(Voicechat.MODID, "textures/icons/speaker_whisper.png");
     private static final ResourceLocation SPEAKER_OFF_ICON = new ResourceLocation(Voicechat.MODID, "textures/icons/speaker_off.png");
     private static final ResourceLocation DISCONNECT_ICON = new ResourceLocation(Voicechat.MODID, "textures/icons/disconnected.png");
     private static final ResourceLocation GROUP_ICON = new ResourceLocation(Voicechat.MODID, "textures/icons/group.png");
 
+    private static final ResourceLocation MICROPHONE_ICON = new ResourceLocation(Voicechat.MODID, "textures/icons/mic.png");
+    private static final ResourceLocation MICROPHONE_OFF_ICON = new ResourceLocation(Voicechat.MODID, "textures/icons/mic_off.png");
+    private static final ResourceLocation SPEAKER_ICON = new ResourceLocation(Voicechat.MODID, "textures/icons/mic_nametag.png");
+    private static final ResourceLocation MICROPHONE_SPEAKER_ON_ICON = new ResourceLocation(Voicechat.MODID, "textures/icons/mic_speaker.png");
+    private static final ResourceLocation MICROPHONE_SPEAKER_OFF_ICON = new ResourceLocation(Voicechat.MODID, "textures/icons/mic_speaker_no.png");
+    private static final ResourceLocation MICROPHONE_SPEAKER_MUTE_ICON = new ResourceLocation(Voicechat.MODID, "textures/icons/mic_speaker_off.png");
+
     private final Minecraft minecraft;
+    public IconChangePacket.IconStatus iconStatus;
 
     public RenderEvents() {
         minecraft = Minecraft.getInstance();
         ClientCompatibilityManager.INSTANCE.onRenderNamePlate(this::onRenderName);
         ClientCompatibilityManager.INSTANCE.onRenderHUD(this::onRenderHUD);
+
+        this.iconStatus = IconChangePacket.IconStatus.NORMAL;
     }
 
     private void onRenderHUD(PoseStack stack, float tickDelta) {
@@ -51,18 +60,30 @@ public class RenderEvents {
             renderIcon(stack, DISCONNECT_ICON);
         } else if (manager.isDisabled()) {
             renderIcon(stack, SPEAKER_OFF_ICON);
-        } else if (manager.isMuted() && VoicechatClient.CLIENT_CONFIG.microphoneActivationType.get().equals(MicrophoneActivationType.VOICE)) {
-            renderIcon(stack, MICROPHONE_OFF_ICON);
         } else if (client != null && client.getMicThread() != null) {
             if (client.getMicThread().isWhispering()) {
                 renderIcon(stack, WHISPER_MICROPHONE_ICON);
-            } else if (client.getMicThread().isTalking()) {
-                renderIcon(stack, MICROPHONE_ICON);
+                return;
             }
-        }
 
-        if (manager.isInGroup() && VoicechatClient.CLIENT_CONFIG.showGroupHUD.get()) {
-            GroupChatManager.renderIcons(stack);
+            boolean muted = manager.isMuted() && VoicechatClient.CLIENT_CONFIG.microphoneActivationType.get().equals(MicrophoneActivationType.VOICE);
+            boolean talking = client.getMicThread().isTalking();
+
+            if (iconStatus == IconChangePacket.IconStatus.MUTED) {
+                renderIcon(stack, MICROPHONE_OFF_ICON);
+            } else if (iconStatus == IconChangePacket.IconStatus.SPEAKER) {
+                if (muted)  {
+                    renderIcon(stack, MICROPHONE_SPEAKER_MUTE_ICON);
+                } else {
+                    renderIcon(stack, talking ? SPEAKER_ICON : SPEAKER_OFF_ICON);
+                }
+            } else {
+                if (muted) {
+                    renderIcon(stack, MICROPHONE_OFF_ICON);
+                } else if (talking) {
+                    renderIcon(stack, MICROPHONE_ICON);
+                }
+            }
         }
     }
 
@@ -101,7 +122,7 @@ public class RenderEvents {
             return;
         }
 
-        if (!minecraft.options.hideGui) {
+        /*if (!minecraft.options.hideGui) {
             ClientPlayerStateManager manager = ClientManager.getPlayerStateManager();
             ClientVoicechat client = ClientManager.getClient();
             ClientGroup group = manager.getGroup(player);
@@ -117,6 +138,12 @@ public class RenderEvents {
             } else if (manager.isPlayerDisabled(player)) {
                 renderPlayerIcon(player, component, SPEAKER_OFF_ICON, stack, vertexConsumers, light);
             }
+        }*/
+
+        ClientPlayerStateManager manager = ClientManager.getPlayerStateManager();
+        ClientVoicechat client = ClientManager.getClient();
+        if (client != null && client.getTalkCache().isTalking(player)) {
+            renderPlayerIcon(player, component, SPEAKER_ICON, stack, vertexConsumers, light);
         }
     }
 

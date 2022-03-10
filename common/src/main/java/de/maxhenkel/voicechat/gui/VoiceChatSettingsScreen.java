@@ -74,12 +74,12 @@ public class VoiceChatSettingsScreen extends VoiceChatScreenBase implements MicT
 
         addRenderableWidget(new MicTestButton(guiLeft + 10, y, xSize - 20, 20, this));
         y += 21;
-        if (isIngame()) {
+        /*if (isIngame()) {
             addRenderableWidget(new Button(guiLeft + 10, y, xSize - 20, 20, ADJUST_VOLUMES, button -> {
                 minecraft.setScreen(new PlayerVolumesScreen());
             }));
             y += 21;
-        }
+        }*/
         addRenderableWidget(new Button(guiLeft + 10, y, xSize / 2 - 15, 20, SELECT_MICROPHONE, button -> {
             minecraft.setScreen(new SelectMicrophoneScreen(this));
         }));

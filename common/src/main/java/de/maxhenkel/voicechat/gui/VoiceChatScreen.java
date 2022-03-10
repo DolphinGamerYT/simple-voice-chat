@@ -4,8 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxhenkel.voicechat.Voicechat;
 import de.maxhenkel.voicechat.VoicechatClient;
-import de.maxhenkel.voicechat.gui.group.GroupScreen;
-import de.maxhenkel.voicechat.gui.group.JoinGroupScreen;
 import de.maxhenkel.voicechat.gui.tooltips.DisableTooltipSupplier;
 import de.maxhenkel.voicechat.gui.tooltips.HideTooltipSupplier;
 import de.maxhenkel.voicechat.gui.tooltips.MuteTooltipSupplier;
@@ -50,34 +48,37 @@ public class VoiceChatScreen extends VoiceChatScreenBase {
         super.init();
         @Nullable ClientVoicechat client = ClientManager.getClient();
 
-        mute = new ToggleImageButton(guiLeft + 6, guiTop + ySize - 6 - 20, MICROPHONE, stateManager::isMuted, button -> {
+        int xSettings = 75;
+        int ySettings = 20;
+        int xyMic = 16;
+        mute = new ToggleImageButton(guiLeft + (xSize/2) - (xyMic/2) - (xSettings/2) - 16, guiTop + (ySize/2) - (xyMic/2) -2, MICROPHONE, stateManager::isMuted, button -> {
             stateManager.setMuted(!stateManager.isMuted());
         }, new MuteTooltipSupplier(this, stateManager));
         addRenderableWidget(mute);
 
-        disable = new ToggleImageButton(guiLeft + 6 + 20 + 2, guiTop + ySize - 6 - 20, SPEAKER, stateManager::isDisabled, button -> {
+        /*disable = new ToggleImageButton(guiLeft + 6 + 20 + 2, guiTop + ySize - 6 - 20, SPEAKER, stateManager::isDisabled, button -> {
             stateManager.setDisabled(!stateManager.isDisabled());
         }, new DisableTooltipSupplier(this, stateManager));
-        addRenderableWidget(disable);
+        addRenderableWidget(disable);*/
 
-        if (client != null) {
+        /*if (client != null) {
             if (client.getRecorder() != null || (client.getConnection() != null && client.getConnection().getData().allowRecording())) {
                 ToggleImageButton record = new ToggleImageButton(guiLeft + xSize - 6 - 20 - 2 - 20, guiTop + ySize - 6 - 20, RECORD, () -> ClientManager.getClient() != null && ClientManager.getClient().getRecorder() != null, button -> toggleRecording(), new RecordingTooltipSupplier(this));
                 addRenderableWidget(record);
             }
-        }
+        }*/
 
-        ToggleImageButton hide = new ToggleImageButton(guiLeft + xSize - 6 - 20, guiTop + ySize - 6 - 20, HIDE, VoicechatClient.CLIENT_CONFIG.hideIcons::get, button -> {
+        /*ToggleImageButton hide = new ToggleImageButton(guiLeft + xSize - 6 - 20, guiTop + ySize - 6 - 20, HIDE, VoicechatClient.CLIENT_CONFIG.hideIcons::get, button -> {
             VoicechatClient.CLIENT_CONFIG.hideIcons.set(!VoicechatClient.CLIENT_CONFIG.hideIcons.get()).save();
         }, new HideTooltipSupplier(this));
-        addRenderableWidget(hide);
+        addRenderableWidget(hide);*/
 
-        Button settings = new Button(guiLeft + 6, guiTop + 6 + 15, 75, 20, SETTINGS, button -> {
+        Button settings = new Button(guiLeft + (xSize/2) - (xSettings/2), guiTop + (ySize/2) - (ySettings/2), 75, 20, SETTINGS, button -> {
             minecraft.setScreen(new VoiceChatSettingsScreen());
         });
         addRenderableWidget(settings);
 
-        Button group = new Button(guiLeft + xSize - 6 - 75 + 1, guiTop + 6 + 15, 75, 20, GROUP, button -> {
+        /*Button group = new Button(guiLeft + xSize - 6 - 75 + 1, guiTop + 6 + 15, 75, 20, GROUP, button -> {
             if (stateManager.isInGroup()) {
                 minecraft.setScreen(new GroupScreen(stateManager.getGroup()));
             } else {
@@ -86,8 +87,8 @@ public class VoiceChatScreen extends VoiceChatScreenBase {
         });
         addRenderableWidget(group);
 
-        group.active = client != null && client.getConnection() != null && client.getConnection().getData().groupsEnabled();
-        recordingHoverArea = new HoverArea(6 + 20 + 2 + 20 + 2, ySize - 6 - 20, xSize - (6 + 20 + 2 + 20 + 2) * 2, 20);
+        group.active = client != null && client.getConnection() != null && client.getConnection().getData().groupsEnabled();*/
+        // recordingHoverArea = new HoverArea(6 + 20 + 2 + 20 + 2, ySize - 6 - 20, xSize - (6 + 20 + 2 + 20 + 2) * 2, 20);
 
         checkButtons();
     }

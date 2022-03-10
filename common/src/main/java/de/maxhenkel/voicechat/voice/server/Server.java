@@ -34,7 +34,6 @@ public class Server extends Thread {
     private final BlockingQueue<RawUdpPacket> packetQueue;
     private final PingManager pingManager;
     private final PlayerStateManager playerStateManager;
-    private final GroupManager groupManager;
 
     public Server(MinecraftServer server) {
         if (server instanceof DedicatedServer) {
@@ -55,7 +54,6 @@ public class Server extends Thread {
         packetQueue = new LinkedBlockingQueue<>();
         pingManager = new PingManager(this);
         playerStateManager = new PlayerStateManager();
-        groupManager = new GroupManager(this);
         setDaemon(true);
         setName("VoiceChatServerThread");
         processThread = new ProcessThread();
@@ -364,10 +362,6 @@ public class Server extends Thread {
 
     public PlayerStateManager getPlayerStateManager() {
         return playerStateManager;
-    }
-
-    public GroupManager getGroupManager() {
-        return groupManager;
     }
 
     public MinecraftServer getServer() {

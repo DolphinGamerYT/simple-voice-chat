@@ -5,10 +5,6 @@ import de.maxhenkel.voicechat.VoicechatClient;
 import de.maxhenkel.voicechat.api.events.ClientVoicechatConnectionEvent;
 import de.maxhenkel.voicechat.api.events.MicrophoneMuteEvent;
 import de.maxhenkel.voicechat.api.events.VoicechatDisableEvent;
-import de.maxhenkel.voicechat.gui.CreateGroupScreen;
-import de.maxhenkel.voicechat.gui.EnterPasswordScreen;
-import de.maxhenkel.voicechat.gui.group.GroupScreen;
-import de.maxhenkel.voicechat.gui.group.JoinGroupScreen;
 import de.maxhenkel.voicechat.intercompatibility.ClientCompatibilityManager;
 import de.maxhenkel.voicechat.intercompatibility.CommonCompatibilityManager;
 import de.maxhenkel.voicechat.net.NetManager;
@@ -52,7 +48,7 @@ public class ClientPlayerStateManager {
             states = packet.getPlayerStates();
             Voicechat.logDebug("Received {} states", states.size());
         });
-        CommonCompatibilityManager.INSTANCE.getNetManager().joinedGroupChannel.setClientListener((client, handler, packet) -> {
+        /*CommonCompatibilityManager.INSTANCE.getNetManager().joinedGroupChannel.setClientListener((client, handler, packet) -> {
             Screen screen = Minecraft.getInstance().screen;
             this.group = packet.getGroup();
             if (packet.isWrongPassword()) {
@@ -63,7 +59,7 @@ public class ClientPlayerStateManager {
             } else if (group != null && screen instanceof JoinGroupScreen || screen instanceof CreateGroupScreen || screen instanceof EnterPasswordScreen) {
                 Minecraft.getInstance().setScreen(new GroupScreen(group));
             }
-        });
+        });*/
         ClientCompatibilityManager.INSTANCE.onVoiceChatConnected(this::onVoiceChatConnected);
         ClientCompatibilityManager.INSTANCE.onVoiceChatDisconnected(this::onVoiceChatDisconnected);
         ClientCompatibilityManager.INSTANCE.onDisconnect(this::onDisconnect);

@@ -71,16 +71,6 @@ public class PlayerStateManager implements Listener {
         return new PlayerState(player.getUniqueId(), player.getName(), false, true);
     }
 
-    public void setGroup(Player player, @Nullable ClientGroup group) {
-        PlayerState state = states.get(player.getUniqueId());
-        if (state == null) {
-            state = PlayerStateManager.defaultDisconnectedState(player);
-        }
-        state.setGroup(group);
-        states.put(player.getUniqueId(), state);
-        broadcastState(state);
-    }
-
     public Collection<PlayerState> getStates() {
         return states.values();
     }

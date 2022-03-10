@@ -11,8 +11,6 @@ public class PlayerState {
     private String name;
     private boolean disabled;
     private boolean disconnected;
-    @Nullable
-    private ClientGroup group;
 
     public PlayerState(UUID uuid, String name, boolean disabled, boolean disconnected) {
         this.uuid = uuid;
@@ -53,19 +51,6 @@ public class PlayerState {
         this.disconnected = disconnected;
     }
 
-    @Nullable
-    public ClientGroup getGroup() {
-        return group;
-    }
-
-    public void setGroup(@Nullable ClientGroup group) {
-        this.group = group;
-    }
-
-    public boolean hasGroup() {
-        return group != null;
-    }
-
     @Override
     public String toString() {
         return "{" +
@@ -73,7 +58,6 @@ public class PlayerState {
                 ", disconnected=" + disconnected +
                 ", uuid=" + uuid +
                 ", name=" + name +
-                ", group=" + group +
                 '}';
     }
 
@@ -83,13 +67,7 @@ public class PlayerState {
         UUID uuid = buf.readUUID();
         String name = buf.readUtf(32767);
 
-        PlayerState state = new PlayerState(uuid, name, disabled, disconnected);
-
-        if (buf.readBoolean()) {
-            state.setGroup(ClientGroup.fromBytes(buf));
-        }
-
-        return state;
+        return new PlayerState(uuid, name, disabled, disconnected);
     }
 
     public void toBytes(FriendlyByteBuf buf) {
@@ -97,10 +75,6 @@ public class PlayerState {
         buf.writeBoolean(disconnected);
         buf.writeUUID(uuid);
         buf.writeUtf(name);
-        buf.writeBoolean(hasGroup());
-        if (hasGroup()) {
-            group.toBytes(buf);
-        }
     }
 
 }

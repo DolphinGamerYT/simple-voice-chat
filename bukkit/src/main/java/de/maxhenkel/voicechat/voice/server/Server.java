@@ -5,6 +5,8 @@ import de.maxhenkel.voicechat.api.RawUdpPacket;
 import de.maxhenkel.voicechat.api.VoicechatSocket;
 import de.maxhenkel.voicechat.api.events.SoundPacketEvent;
 import de.maxhenkel.voicechat.debug.CooldownTimer;
+import de.maxhenkel.voicechat.models.VoiceRestrictions;
+import de.maxhenkel.voicechat.models.Whispers;
 import de.maxhenkel.voicechat.net.NetManager;
 import de.maxhenkel.voicechat.permission.PermissionManager;
 import de.maxhenkel.voicechat.plugins.PluginManager;
@@ -19,10 +21,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.security.InvalidKeyException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -38,9 +37,10 @@ public class Server extends Thread {
     private final BlockingQueue<RawUdpPacket> packetQueue;
     private final PingManager pingManager;
     private final PlayerStateManager playerStateManager;
-    private final GroupManager groupManager;
 
-    public Server(org.bukkit.Server server) {
+    private final VoiceRestrictions voiceRestrictions;
+
+    public Server(org.bukkit.Server server, VoiceRestrictions voiceRestrictions) {
         int configPort = Voicechat.SERVER_CONFIG.voiceChatPort.get();
         if (configPort < 0) {
             Voicechat.LOGGER.info("Using the Minecraft servers port as voice chat port");
@@ -49,13 +49,13 @@ public class Server extends Thread {
             port = configPort;
         }
         this.server = server;
+        this.voiceRestrictions = voiceRestrictions;
         socket = PluginManager.instance().getSocketImplementation(server);
         connections = new HashMap<>();
         secrets = new HashMap<>();
         packetQueue = new LinkedBlockingQueue<>();
         pingManager = new PingManager(this);
         playerStateManager = new PlayerStateManager();
-        groupManager = new GroupManager();
         setDaemon(true);
         setName("VoiceChatServerThread");
         processThread = new ProcessThread();
@@ -183,11 +183,13 @@ public class Server extends Thread {
                         if (player == null) {
                             continue;
                         }
-                        if (!player.hasPermission(PermissionManager.SPEAK_PERMISSION)) {
+                        /*if (!player.hasPermission(PermissionManager.SPEAK_PERMISSION)) {
                             CooldownTimer.run("muted-" + playerUUID, () -> {
-                                //TODO change to status bar message
                                 NetManager.sendMessage(player, Component.translatable("message.voicechat.no_speak_permission"));
                             });
+                            continue;
+                        }*/
+                        if (voiceRestrictions.checkPlayer(player)) {
                             continue;
                         }
                         PlayerState state = playerStateManager.getState(player.getUniqueId());
@@ -195,7 +197,7 @@ public class Server extends Thread {
                             continue;
                         }
                         if (!PluginManager.instance().onMicPacket(player, state, packet)) {
-                            processMicPacket(player, state, packet);
+                            processProximityPacket(state, player, packet);
                         }
                     } else if (message.getPacket() instanceof PingPacket packet) {
                         pingManager.onPongPacket(packet);
@@ -213,48 +215,8 @@ public class Server extends Thread {
         }
     }
 
-    private void processMicPacket(Player player, PlayerState state, MicPacket packet) throws Exception {
-        if (state.hasGroup()) {
-            processGroupPacket(state, player, packet);
-            if (Voicechat.SERVER_CONFIG.openGroups.get()) {
-                processProximityPacket(state, player, packet);
-            }
-            return;
-        }
-        processProximityPacket(state, player, packet);
-    }
-
-    private void processGroupPacket(PlayerState senderState, Player sender, MicPacket packet) throws Exception {
-        ClientGroup group = senderState.getGroup();
-        if (group == null) {
-            return;
-        }
-        NetworkMessage soundMessage = new NetworkMessage(new GroupSoundPacket(senderState.getUuid(), packet.getData(), packet.getSequenceNumber()));
-        for (PlayerState state : playerStateManager.getStates()) {
-            if (!group.equals(state.getGroup())) {
-                continue;
-            }
-            GroupSoundPacket groupSoundPacket = new GroupSoundPacket(senderState.getUuid(), packet.getData(), packet.getSequenceNumber());
-            if (senderState.getUuid().equals(state.getUuid())) {
-                continue;
-            }
-            ClientConnection connection = connections.get(state.getUuid());
-            if (connection == null) {
-                continue;
-            }
-            Player p = server.getPlayer(senderState.getUuid());
-            if (p == null) {
-                continue;
-            }
-            if (!PluginManager.instance().onSoundPacket(sender, senderState, p, state, groupSoundPacket, SoundPacketEvent.SOURCE_GROUP)) {
-                connection.send(this, soundMessage);
-            }
-        }
-    }
-
     private void processProximityPacket(PlayerState senderState, Player sender, MicPacket packet) throws Exception {
         double distance = Voicechat.SERVER_CONFIG.voiceChatDistance.get();
-        @Nullable ClientGroup group = senderState.getGroup();
 
         SoundPacket<?> soundPacket = null;
         String source = null;
@@ -283,23 +245,41 @@ public class Server extends Thread {
         }
 
         if (soundPacket == null) {
+            if (voiceRestrictions.isSpeaker(sender)) {
+                soundPacket = new SpeakerSoundPacket(sender.getUniqueId(), packet.getData(), packet.getSequenceNumber());
+
+            }
             soundPacket = new PlayerSoundPacket(sender.getUniqueId(), packet.getData(), packet.getSequenceNumber(), packet.isWhispering());
             source = SoundPacketEvent.SOURCE_PROXIMITY;
         }
 
-        broadcast(ServerWorldUtils.getPlayersInRange(sender.getWorld(), sender.getLocation(), distance, p -> !p.getUniqueId().equals(sender.getUniqueId())), soundPacket, sender, senderState, group, source);
+        Collection<Player> playersToSendPacket = new ArrayList<>();
+        List<Player> whisperingPlayers = voiceRestrictions.getPlayerWhispers(sender.getUniqueId()).stream().map(server::getPlayer).toList();
+
+        if (voiceRestrictions.isSpeaker(sender)) {
+            Double d = voiceRestrictions.getSpeakerDistance(sender);
+            if (d < 0) {
+                playersToSendPacket = server.getOnlinePlayers().stream().map(Player::getPlayer).toList();
+            } else {
+                ServerWorldUtils.getPlayersInRange(sender.getWorld(), sender.getLocation(), d, p -> !p.getUniqueId().equals(sender.getUniqueId()));
+            }
+        } else {
+            playersToSendPacket = ServerWorldUtils.getPlayersInRange(sender.getWorld(), sender.getLocation(), distance, p -> !p.getUniqueId().equals(sender.getUniqueId()));
+        }
+
+        if (whisperingPlayers.size() > 0) {
+            playersToSendPacket = playersToSendPacket.stream().filter(p -> !whisperingPlayers.contains(p)).toList();
+        }
+        broadcast(playersToSendPacket, soundPacket, sender, senderState, source);
     }
 
-    public void broadcast(Collection<Player> players, SoundPacket<?> packet, @Nullable Player sender, @Nullable PlayerState senderState, @Nullable ClientGroup group, String source) {
+    public void broadcast(Collection<Player> players, SoundPacket<?> packet, @Nullable Player sender, @Nullable PlayerState senderState, String source) {
         for (Player player : players) {
             PlayerState state = playerStateManager.getState(player.getUniqueId());
             if (state == null) {
                 continue;
             }
             if (state.isDisabled() || state.isDisconnected()) {
-                continue;
-            }
-            if (state.hasGroup() && state.getGroup().equals(group)) {
                 continue;
             }
             ClientConnection connection = connections.get(state.getUuid());
@@ -361,10 +341,6 @@ public class Server extends Thread {
 
     public PlayerStateManager getPlayerStateManager() {
         return playerStateManager;
-    }
-
-    public GroupManager getGroupManager() {
-        return groupManager;
     }
 
 }

@@ -1,6 +1,7 @@
 package de.maxhenkel.voicechat.voice.client;
 
 import de.maxhenkel.voicechat.Voicechat;
+import de.maxhenkel.voicechat.VoicechatClient;
 import de.maxhenkel.voicechat.intercompatibility.ClientCompatibilityManager;
 import de.maxhenkel.voicechat.voice.common.*;
 
@@ -70,6 +71,20 @@ public class ClientVoicechatConnection extends Thread {
                 } else if (in.getPacket() instanceof KeepAlivePacket) {
                     lastKeepAlive = System.currentTimeMillis();
                     sendToServer(new NetworkMessage(new KeepAlivePacket()));
+                } else if (in.getPacket() instanceof SettingsChangePacket) {
+                    SettingsChangePacket p = (SettingsChangePacket) in.getPacket();
+
+                    p.getSettings().forEach(setting -> {
+                        switch (setting.getType()) {
+                            case DISTANCE -> client.getConnection().getData().setVoiceChatDistance(setting.getValue());
+                            case FADEDISTANCE -> client.getConnection().getData().setVoiceChatFadeDistance(setting.getValue());
+                            case WHISPERMULTIPLIER -> client.getConnection().getData().setWhisperDistanceMultiplier(setting.getValue());
+                            case CROUCHMULTIPLIER -> client.getConnection().getData().setCrouchDistanceMultiplier(setting.getValue());
+                        }
+                    });
+                } else if (in.getPacket() instanceof IconChangePacket) {
+                    IconChangePacket p = (IconChangePacket) in.getPacket();
+                    ClientManager.getRenderEvents().iconStatus = p.getIconStatus();
                 }
             }
         } catch (InterruptedException ignored) {

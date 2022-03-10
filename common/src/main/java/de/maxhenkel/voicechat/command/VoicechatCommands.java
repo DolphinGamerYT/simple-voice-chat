@@ -103,14 +103,7 @@ public class VoicechatCommands {
             }
 
             ServerPlayer player = EntityArgument.getPlayer(commandSource, "target");
-            Group group = server.getGroupManager().getGroup(state.getGroup().getId());
-
-            if (group == null) {
-                return 1;
-            }
-
-            String passwordSuffix = group.getPassword() == null ? "" : " \"" + group.getPassword() + "\"";
-            player.sendMessage(new TranslatableComponent("message.voicechat.invite", source.getDisplayName(), new TextComponent(group.getName()).withStyle(ChatFormatting.GRAY), ComponentUtils.wrapInSquareBrackets(new TranslatableComponent("message.voicechat.accept_invite").withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/voicechat join " + group.getId().toString() + passwordSuffix)).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableComponent("message.voicechat.accept_invite.hover"))))).withStyle(ChatFormatting.GREEN)), Util.NIL_UUID);
+            //Group group = server.getGroupManager().getGroup(state.getGroup().getId());
 
             commandSource.getSource().sendSuccess(new TranslatableComponent("message.voicechat.invite_successful", player.getDisplayName()), false);
 
@@ -156,7 +149,6 @@ public class VoicechatCommands {
                 return 1;
             }
 
-            server.getGroupManager().leaveGroup(source);
             commandSource.getSource().sendSuccess(new TranslatableComponent("message.voicechat.leave_successful"), false);
             return 1;
         }));
@@ -182,15 +174,6 @@ public class VoicechatCommands {
             return 1;
         }
 
-        Group group = server.getGroupManager().getGroup(groupID);
-
-        if (group == null) {
-            source.sendFailure(new TranslatableComponent("message.voicechat.group_does_not_exist"));
-            return 1;
-        }
-
-        server.getGroupManager().joinGroup(group, player, password);
-        source.sendSuccess(new TranslatableComponent("message.voicechat.join_successful", new TextComponent(group.getName()).withStyle(ChatFormatting.GRAY)), false);
         return 1;
     }
 

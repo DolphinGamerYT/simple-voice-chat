@@ -26,6 +26,7 @@ dependencies {
     implementation "org.bukkit:craftbukkit:${bukkit_version}"
 
     implementation "net.kyori:adventure-api:${adventure_api_version}"
+    implementation 'log4j:log4j:1.2.17'
     shadow "net.kyori:adventure-api:${adventure_api_version}"
     implementation "net.kyori:adventure-text-serializer-gson:${adventure_api_version}"
     shadow "net.kyori:adventure-text-serializer-gson:${adventure_api_version}"
@@ -36,6 +37,9 @@ dependencies {
     shadow "de.maxhenkel.configbuilder:configbuilder:${configbuilder_version}"
 
     compileOnly "me.clip:placeholderapi:${placeholder_api_version}"
+
+    implementation "co.aikar:acf-paper:0.5.1-SNAPSHOT"
+    shadow "co.aikar:acf-paper:0.5.1-SNAPSHOT"
 
     implementation project(':api')
     shadow project(':api')
@@ -54,6 +58,8 @@ repositories {
         name = "placeholderapi"
         url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
     }
+    maven { url = "https://repo.aikar.co/content/groups/aikar/" }
+    maven { url = "https://hub.spigotmc.org/nexus/content/groups/public/" }
 }
 
 task copyJarToServer {
@@ -94,6 +100,10 @@ shadowJar {
     relocate 'com.google.gson', "de.maxhenkel.voicechat.gson"
     relocate 'me.lucko.commodore', "de.maxhenkel.voicechat.commodore"
     relocate 'de.maxhenkel.configbuilder', "de.maxhenkel.voicechat.configbuilder"
+
+    relocate 'co.aikar.commands', 'de.maxhenkel.voicechat.acf'
+    relocate 'co.aikar.locales', 'de.maxhenkel.voicechat.locales'
+
     dependencies {
         exclude(dependency('com.mojang:brigadier:.*'))
         exclude(dependency('com.google.code.findbugs:jsr305:.*'))

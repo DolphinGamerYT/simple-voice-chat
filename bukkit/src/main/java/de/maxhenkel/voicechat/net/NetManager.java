@@ -28,14 +28,9 @@ public class NetManager implements Listener {
         try {
             registerIncomingPacket(UpdateStatePacket.class);
             registerIncomingPacket(RequestSecretPacket.class);
-            registerIncomingPacket(CreateGroupPacket.class);
-            registerIncomingPacket(JoinGroupPacket.class);
-            registerIncomingPacket(LeaveGroupPacket.class);
-
             registerOutgoingPacket(SecretPacket.class);
             registerOutgoingPacket(PlayerStatesPacket.class);
             registerOutgoingPacket(PlayerStatePacket.class);
-            registerOutgoingPacket(JoinedGroupPacket.class);
         } catch (Exception e) {
             throw new IllegalStateException("Failed to register voice chat packets");
         }

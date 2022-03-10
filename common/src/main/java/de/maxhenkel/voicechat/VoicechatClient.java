@@ -24,9 +24,10 @@ public abstract class VoicechatClient {
     public static ClientConfig CLIENT_CONFIG;
     public static PlayerVolumeConfig VOLUME_CONFIG;
 
-    public static VoiceChatResourcePack CLASSIC_ICONS;
-    public static VoiceChatResourcePack WHITE_ICONS;
-    public static VoiceChatResourcePack BLACK_ICONS;
+    // Removed extra icon packs
+    // public static VoiceChatResourcePack CLASSIC_ICONS;
+    // public static VoiceChatResourcePack WHITE_ICONS;
+    // public static VoiceChatResourcePack BLACK_ICONS;
 
     public void initializeClient() {
         ClientCompatibilityManager.INSTANCE = createCompatibilityManager();
@@ -37,7 +38,8 @@ public abstract class VoicechatClient {
         //Load instance
         ClientManager.instance();
 
-        CLASSIC_ICONS = new VoiceChatResourcePack("Classic Icons", "classic_icons");
+        // Removed extra icon packs
+        /* CLASSIC_ICONS = new VoiceChatResourcePack("Classic Icons", "classic_icons");
         WHITE_ICONS = new VoiceChatResourcePack("White Icons", "white_icons");
         BLACK_ICONS = new VoiceChatResourcePack("Black Icons", "black_icons");
 
@@ -45,7 +47,7 @@ public abstract class VoicechatClient {
             consumer.accept(Pack.create(CLASSIC_ICONS.getName(), false, () -> CLASSIC_ICONS, packConstructor, Pack.Position.TOP, PackSource.BUILT_IN));
             consumer.accept(Pack.create(WHITE_ICONS.getName(), false, () -> WHITE_ICONS, packConstructor, Pack.Position.TOP, PackSource.BUILT_IN));
             consumer.accept(Pack.create(BLACK_ICONS.getName(), false, () -> BLACK_ICONS, packConstructor, Pack.Position.TOP, PackSource.BUILT_IN));
-        });
+        }); */
 
         if (Platform.isMac() && VoicechatClient.CLIENT_CONFIG.macosMicrophoneWorkaround.get()) {
             Voicechat.LOGGER.info("Running MacOS microphone permission check");

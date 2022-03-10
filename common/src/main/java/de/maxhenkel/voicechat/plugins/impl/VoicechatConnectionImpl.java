@@ -54,18 +54,6 @@ public class VoicechatConnectionImpl implements VoicechatConnection {
         if (server == null) {
             return;
         }
-        if (group == null) {
-            server.getGroupManager().joinGroup(null, serverPlayer, null);
-            return;
-        }
-        if (group instanceof GroupImpl g) {
-            de.maxhenkel.voicechat.voice.server.Group actualGroup = server.getGroupManager().getGroup(g.getGroup().getId());
-            if (actualGroup == null) {
-                server.getGroupManager().addGroup(g.getGroup(), serverPlayer);
-                actualGroup = g.getGroup();
-            }
-            server.getGroupManager().joinGroup(actualGroup, serverPlayer, g.getGroup().getPassword());
-        }
     }
 
     @Override

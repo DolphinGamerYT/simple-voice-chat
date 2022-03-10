@@ -38,14 +38,15 @@ public class GroupImpl implements Group {
 
     @Nullable
     public static GroupImpl create(PlayerState state) {
-        ClientGroup group = state.getGroup();
+        /*ClientGroup group = state.getGroup();
+        ClientGroup group = null;
         Server server = Voicechat.SERVER.getServer();
         if (server != null && group != null) {
             de.maxhenkel.voicechat.voice.server.Group g = server.getGroupManager().getGroup(group.getId());
             if (g != null) {
                 return new GroupImpl(g);
             }
-        }
+        }*/
         return null;
     }
 

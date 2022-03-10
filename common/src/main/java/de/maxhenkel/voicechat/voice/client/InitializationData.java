@@ -15,12 +15,11 @@ public class InitializationData {
     private final UUID secret;
     private final ServerConfig.Codec codec;
     private final int mtuSize;
-    private final double voiceChatDistance;
-    private final double voiceChatFadeDistance;
-    private final double crouchDistanceMultiplier;
-    private final double whisperDistanceMultiplier;
+    private double voiceChatDistance;
+    private double voiceChatFadeDistance;
+    private double crouchDistanceMultiplier;
+    private double whisperDistanceMultiplier;
     private final int keepAlive;
-    private final boolean groupsEnabled;
     private final boolean allowRecording;
 
     public InitializationData(String serverIP, SecretPacket secretPacket) {
@@ -36,7 +35,6 @@ public class InitializationData {
         this.crouchDistanceMultiplier = secretPacket.getCrouchDistanceMultiplier();
         this.whisperDistanceMultiplier = secretPacket.getWhisperDistanceMultiplier();
         this.keepAlive = secretPacket.getKeepAlive();
-        this.groupsEnabled = secretPacket.groupsEnabled();
         this.allowRecording = secretPacket.allowRecording();
     }
 
@@ -109,11 +107,27 @@ public class InitializationData {
     }
 
     public boolean groupsEnabled() {
-        return groupsEnabled;
+        return false;
     }
 
     public boolean allowRecording() {
         return allowRecording;
+    }
+
+    public void setVoiceChatDistance(double voiceChatDistance) {
+        this.voiceChatDistance = voiceChatDistance;
+    }
+
+    public void setVoiceChatFadeDistance(double voiceChatFadeDistance) {
+        this.voiceChatFadeDistance = voiceChatFadeDistance;
+    }
+
+    public void setCrouchDistanceMultiplier(double crouchDistanceMultiplier) {
+        this.crouchDistanceMultiplier = crouchDistanceMultiplier;
+    }
+
+    public void setWhisperDistanceMultiplier(double whisperDistanceMultiplier) {
+        this.whisperDistanceMultiplier = whisperDistanceMultiplier;
     }
 
     private static class HostData {

@@ -72,6 +72,9 @@ public class NetworkMessage {
         packetRegistry.put((byte) 0x6, AuthenticateAckPacket.class);
         packetRegistry.put((byte) 0x7, PingPacket.class);
         packetRegistry.put((byte) 0x8, KeepAlivePacket.class);
+        packetRegistry.put((byte) 0x9, SpeakerSoundPacket.class);
+        packetRegistry.put((byte) 0x10, IconChangePacket.class);
+        packetRegistry.put((byte) 0x11, SettingsChangePacket.class);
     }
 
     public static NetworkMessage readPacketClient(DatagramSocket socket, ClientVoicechatConnection client) throws IllegalAccessException, InstantiationException, IOException, InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvocationTargetException, NoSuchMethodException {

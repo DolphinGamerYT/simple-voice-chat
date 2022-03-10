@@ -1,14 +1,18 @@
 package de.maxhenkel.voicechat.voice.server;
 
 import de.maxhenkel.voicechat.Voicechat;
+import de.maxhenkel.voicechat.models.VoiceRestrictions;
 import de.maxhenkel.voicechat.net.NetManager;
 import de.maxhenkel.voicechat.net.RequestSecretPacket;
 import de.maxhenkel.voicechat.net.SecretPacket;
 import de.maxhenkel.voicechat.permission.PermissionManager;
 import de.maxhenkel.voicechat.plugins.PluginManager;
+import de.maxhenkel.voicechat.voice.common.IconChangePacket;
+import de.maxhenkel.voicechat.voice.common.SettingsChangePacket;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,7 +35,7 @@ public class ServerVoiceEvents implements Listener {
             Voicechat.LOGGER.warn("Running in offline mode - Voice chat encryption is not secure!");
         }
 
-        server = new Server(mcServer);
+        server = new Server(mcServer, Voicechat.VOICE_RESTRICTIONS);
         server.start();
         PluginManager.instance().onServerStarted(mcServer);
     }
@@ -123,5 +127,45 @@ public class ServerVoiceEvents implements Listener {
 
     public Server getServer() {
         return server;
+    }
+
+    public void sendSettingsChange(Player player, SettingsChangePacket packet) {
+        try {
+            ClientConnection connection = server.getConnections().get(player.getUniqueId());
+            if (connection == null) throw new Exception("Connection not found");
+        } catch (Exception e) {
+            Bukkit.getScheduler().runTaskLater(Voicechat.INSTANCE, () -> {
+                try {
+                    ClientConnection connection = server.getConnections().get(player.getUniqueId());
+                    if (connection == null) throw new Exception("Connection not found");
+                    getServer().sendPacket(packet, connection);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }, 10L);
+        }
+    }
+
+    public void updateIconStatus(Player player) {
+        IconChangePacket.IconStatus status = IconChangePacket.IconStatus.NORMAL;
+        VoiceRestrictions vr = Voicechat.VOICE_RESTRICTIONS;
+
+        if (vr.isSpeaker(player)) {
+            status = IconChangePacket.IconStatus.SPEAKER;
+        } else if (!player.hasPermission("squidvoice.bypass")) {
+            if (vr.isAllMuted()) {
+                status = IconChangePacket.IconStatus.GLOBALMUTED;
+            } else if (vr.isPlayerMuted(player.getUniqueId())) {
+                status = IconChangePacket.IconStatus.MUTED;
+            }
+        }
+
+        try {
+            ClientConnection connection = server.getConnections().get(player.getUniqueId());
+            if (connection == null) throw new Exception("Connection not found");
+            server.sendPacket(new IconChangePacket(status), connection);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

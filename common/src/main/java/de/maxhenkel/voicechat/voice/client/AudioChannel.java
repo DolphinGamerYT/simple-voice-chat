@@ -200,6 +200,8 @@ public class AudioChannel extends Thread {
             speaker.write(monoData, volume * getDistanceVolume(p.getLocation()), stereo ? p.getLocation() : null);
             client.getTalkCache().updateTalking(uuid, false);
             appendRecording(player, () -> convertLocationalPacketToStereo(p.getLocation(), monoData));
+        } else if (packet instanceof SpeakerSoundPacket) {
+            speaker.write(monoData, 1f, null);
         }
     }
 
