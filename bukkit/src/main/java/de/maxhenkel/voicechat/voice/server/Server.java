@@ -240,7 +240,7 @@ public class Server extends Thread {
             }
         }
 
-        Collection<Player> playersToSendPacket = new ArrayList<>();
+        Collection<Player> playersToSendPacket;
         List<Player> whisperingPlayers = voiceRestrictions.getPlayerWhispers(sender.getUniqueId()).stream().map(server::getPlayer).toList();
 
         if (soundPacket == null) {
@@ -256,13 +256,12 @@ public class Server extends Thread {
             } else {
                 playersToSendPacket = ServerWorldUtils.getPlayersInRange(sender.getWorld(), sender.getLocation(), d, p -> !p.getUniqueId().equals(sender.getUniqueId()));
             }
+        } else if (whisperingPlayers.size() > 0) {
+            playersToSendPacket = whisperingPlayers;
         } else {
             playersToSendPacket = ServerWorldUtils.getPlayersInRange(sender.getWorld(), sender.getLocation(), distance, p -> !p.getUniqueId().equals(sender.getUniqueId()));
         }
 
-        if (whisperingPlayers.size() > 0) {
-            playersToSendPacket = playersToSendPacket.stream().filter(whisperingPlayers::contains).toList();
-        }
         broadcast(playersToSendPacket, soundPacket, sender, senderState, source);
     }
 
