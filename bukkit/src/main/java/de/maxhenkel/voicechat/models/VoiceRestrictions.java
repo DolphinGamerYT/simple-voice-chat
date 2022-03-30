@@ -24,6 +24,10 @@ public class VoiceRestrictions {
         this.speakers = new ConcurrentHashMap<>();
     }
 
+    /**
+     * @param player Player to check
+     * @return true if player is allowed to speak
+     */
     public boolean checkPlayer(Player player) {
         if (this.mutedPlayers.contains(player.getUniqueId())) return false;
         if (player.hasPermission(this.permission)) return true;
