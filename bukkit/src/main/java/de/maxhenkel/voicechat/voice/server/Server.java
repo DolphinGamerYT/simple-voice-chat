@@ -241,12 +241,9 @@ public class Server extends Thread {
         }
 
         if (soundPacket == null) {
-            if (voiceRestrictions.isSpeaker(sender)) {
-                soundPacket = new SpeakerSoundPacket(sender.getUniqueId(), packet.getData(), packet.getSequenceNumber());
-
-            }
-            soundPacket = new PlayerSoundPacket(sender.getUniqueId(), packet.getData(), packet.getSequenceNumber(), packet.isWhispering());
-            source = SoundPacketEvent.SOURCE_PROXIMITY;
+            boolean speaker = voiceRestrictions.isSpeaker(sender) || voiceRestrictions.getPlayerWhispers(sender.getUniqueId()).size() > 0;
+            soundPacket = speaker ? new SpeakerSoundPacket(sender.getUniqueId(), packet.getData(), packet.getSequenceNumber()) : new PlayerSoundPacket(sender.getUniqueId(), packet.getData(), packet.getSequenceNumber(), packet.isWhispering());
+            source = speaker ? SoundPacketEvent.SOURCE_PLUGIN : SoundPacketEvent.SOURCE_PROXIMITY;
         }
 
         Collection<Player> playersToSendPacket = new ArrayList<>();
