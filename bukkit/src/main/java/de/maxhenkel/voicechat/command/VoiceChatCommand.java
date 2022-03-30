@@ -50,6 +50,8 @@ public class VoiceChatCommand extends BaseCommand {
                 if (target != player) {
                     player.sendMessage(this.prefix + "§aSpeaker mode disabled for §e" + target.getName() + "§a.");
                 }
+
+                this.updateIcon(target);
             } else {
                 if (target == player) {
                     player.sendMessage(this.prefix + "§cSpeaker mode is already disabled.");
