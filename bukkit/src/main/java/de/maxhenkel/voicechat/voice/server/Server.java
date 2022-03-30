@@ -240,29 +240,28 @@ public class Server extends Thread {
             }
         }
 
+        Collection<Player> playersToSendPacket = new ArrayList<>();
+        List<Player> whisperingPlayers = voiceRestrictions.getPlayerWhispers(sender.getUniqueId()).stream().map(server::getPlayer).toList();
+
         if (soundPacket == null) {
-            boolean speaker = voiceRestrictions.isSpeaker(sender) || voiceRestrictions.getPlayerWhispers(sender.getUniqueId()).size() > 0;
+            boolean speaker = voiceRestrictions.isSpeaker(sender) || whisperingPlayers.size() > 0;
             soundPacket = speaker ? new SpeakerSoundPacket(sender.getUniqueId(), packet.getData(), packet.getSequenceNumber()) : new PlayerSoundPacket(sender.getUniqueId(), packet.getData(), packet.getSequenceNumber(), packet.isWhispering());
             source = speaker ? SoundPacketEvent.SOURCE_PLUGIN : SoundPacketEvent.SOURCE_PROXIMITY;
         }
 
-        Collection<Player> playersToSendPacket = new ArrayList<>();
-        List<Player> whisperingPlayers = voiceRestrictions.getPlayerWhispers(sender.getUniqueId()).stream().map(server::getPlayer).toList();
-
         if (voiceRestrictions.isSpeaker(sender)) {
             Double d = voiceRestrictions.getSpeakerDistance(sender);
             if (d < 0) {
-                playersToSendPacket = server.getOnlinePlayers().stream().map(Player::getPlayer).toList();
+                playersToSendPacket = server.getOnlinePlayers().stream().map(Player::getPlayer).filter(p -> !p.getUniqueId().equals(sender.getUniqueId())).toList();
             } else {
                 ServerWorldUtils.getPlayersInRange(sender.getWorld(), sender.getLocation(), d, p -> !p.getUniqueId().equals(sender.getUniqueId()));
             }
-            playersToSendPacket.remove(sender);
         } else {
             playersToSendPacket = ServerWorldUtils.getPlayersInRange(sender.getWorld(), sender.getLocation(), distance, p -> !p.getUniqueId().equals(sender.getUniqueId()));
         }
 
         if (whisperingPlayers.size() > 0) {
-            playersToSendPacket = playersToSendPacket.stream().filter(p -> !whisperingPlayers.contains(p)).toList();
+            playersToSendPacket = playersToSendPacket.stream().filter(whisperingPlayers::contains).toList();
         }
         broadcast(playersToSendPacket, soundPacket, sender, senderState, source);
     }
