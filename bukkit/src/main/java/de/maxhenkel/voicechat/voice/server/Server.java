@@ -189,7 +189,7 @@ public class Server extends Thread {
                             });
                             continue;
                         }*/
-                        if (voiceRestrictions.checkPlayer(player)) {
+                        if (!voiceRestrictions.checkPlayer(player)) {
                             continue;
                         }
                         PlayerState state = playerStateManager.getState(player.getUniqueId());
