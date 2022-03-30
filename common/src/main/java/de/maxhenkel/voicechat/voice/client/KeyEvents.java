@@ -18,12 +18,12 @@ public class KeyEvents {
     public static KeyMapping KEY_PTT;
     public static KeyMapping KEY_WHISPER;
     public static KeyMapping KEY_MUTE;
-    public static KeyMapping KEY_DISABLE;
-    public static KeyMapping KEY_HIDE_ICONS;
+    //public static KeyMapping KEY_DISABLE;
+    //public static KeyMapping KEY_HIDE_ICONS;
     public static KeyMapping KEY_VOICE_CHAT;
     public static KeyMapping KEY_VOICE_CHAT_SETTINGS;
-    public static KeyMapping KEY_GROUP;
-    public static KeyMapping KEY_TOGGLE_RECORDING;
+    //public static KeyMapping KEY_GROUP;
+    //public static KeyMapping KEY_TOGGLE_RECORDING;
 
     public KeyEvents() {
         minecraft = Minecraft.getInstance();
@@ -79,7 +79,7 @@ public class KeyEvents {
             playerStateManager.setMuted(!playerStateManager.isMuted());
         }
 
-        if (KEY_DISABLE.consumeClick() && checkConnected()) {
+        /*if (KEY_DISABLE.consumeClick() && checkConnected()) {
             playerStateManager.setDisabled(!playerStateManager.isDisabled());
         }
 
@@ -96,7 +96,7 @@ public class KeyEvents {
             } else {
                 minecraft.player.displayClientMessage(new TranslatableComponent("message.voicechat.icons_visible"), true);
             }
-        }
+        }*/
     }
 
     private boolean checkConnected() {
