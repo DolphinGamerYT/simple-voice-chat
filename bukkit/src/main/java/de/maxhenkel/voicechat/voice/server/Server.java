@@ -254,7 +254,7 @@ public class Server extends Thread {
             if (d < 0) {
                 playersToSendPacket = server.getOnlinePlayers().stream().map(Player::getPlayer).filter(p -> !p.getUniqueId().equals(sender.getUniqueId())).toList();
             } else {
-                ServerWorldUtils.getPlayersInRange(sender.getWorld(), sender.getLocation(), d, p -> !p.getUniqueId().equals(sender.getUniqueId()));
+                playersToSendPacket = ServerWorldUtils.getPlayersInRange(sender.getWorld(), sender.getLocation(), d, p -> !p.getUniqueId().equals(sender.getUniqueId()));
             }
         } else {
             playersToSendPacket = ServerWorldUtils.getPlayersInRange(sender.getWorld(), sender.getLocation(), distance, p -> !p.getUniqueId().equals(sender.getUniqueId()));
