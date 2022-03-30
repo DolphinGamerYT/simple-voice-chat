@@ -97,6 +97,8 @@ public class VoiceChatCommand extends BaseCommand {
         if (target != player) {
             player.sendMessage(this.prefix + "§aSpeaker mode enabled for " + target.getName() + (distance > 0 ? "§7 (Distance: " + distance + ")" : ""));
         }
+
+        this.updateIcon(target);
     }
 
     @Subcommand("mute")
@@ -116,6 +118,8 @@ public class VoiceChatCommand extends BaseCommand {
 
         Voicechat.VOICE_RESTRICTIONS.addMutedPlayer(target.getUniqueId());
         player.sendMessage(this.prefix + "§aMuted §e" + target.getName() + "§a.");
+
+        this.updateIcon(target);
     }
 
     @Subcommand("unmute")
@@ -135,6 +139,8 @@ public class VoiceChatCommand extends BaseCommand {
 
         Voicechat.VOICE_RESTRICTIONS.removeMutedPlayer(target.getUniqueId());
         player.sendMessage(this.prefix + "§aUnmuted §e" + target.getName() + "§a.");
+
+        this.updateIcon(target);
     }
 
     @Subcommand("globalmute")
@@ -164,6 +170,8 @@ public class VoiceChatCommand extends BaseCommand {
 
         Voicechat.VOICE_RESTRICTIONS.setAllMuted(true);
         player.sendMessage(this.prefix + "§aGlobal mute enabled.");
+
+        Bukkit.getOnlinePlayers().forEach(this::updateIcon);
     }
 
     @Subcommand("whisper")
@@ -204,8 +212,29 @@ public class VoiceChatCommand extends BaseCommand {
         player.sendMessage(this.prefix + "§aYou're no longer whispering §e" + target.getName() + "§a.");
     }
 
+    @Subcommand("list")
+    public void list(Player player) {
+        this.whisperlist(player);
+        this.mutedlist(player);
+        this.speakerlist(player);
+    }
+
     @Subcommand("list whisper")
-    public void whisperlist(Player player) {
+    public void onWhisperlist(Player player) {
+        this.whisperlist(player);
+    }
+
+    @Subcommand("list muted")
+    public void onMutedlist(Player player) {
+        this.mutedlist(player);
+    }
+
+    @Subcommand("list speakers")
+    public void onSpeakerlist(Player player) {
+        this.speakerlist(player);
+    }
+
+    private void whisperlist(Player player) {
         List<Player> players = Voicechat.VOICE_RESTRICTIONS.getPlayerWhispers(player.getUniqueId()).stream().map(Bukkit::getPlayer).toList();
 
         if (players.isEmpty()) {
@@ -215,8 +244,7 @@ public class VoiceChatCommand extends BaseCommand {
         }
     }
 
-    @Subcommand("list muted")
-    public void mutedlist(Player player) {
+    private void mutedlist(Player player) {
         List<Player> players = Voicechat.VOICE_RESTRICTIONS.getMutedPlayers().stream().map(Bukkit::getPlayer).toList();
 
         if (players.isEmpty()) {
@@ -226,8 +254,7 @@ public class VoiceChatCommand extends BaseCommand {
         }
     }
 
-    @Subcommand("list speakers")
-    public void speaklist(Player player) {
+    private void speakerlist(Player player) {
         List<Player> players = Voicechat.VOICE_RESTRICTIONS.getSpeakers().stream().map(Bukkit::getPlayer).toList();
 
         if (players.isEmpty()) {
@@ -235,5 +262,9 @@ public class VoiceChatCommand extends BaseCommand {
         } else {
             player.sendMessage(this.prefix + "§aSpeakers: §e" + players.stream().map(Player::getName).collect(Collectors.joining(", ")));
         }
+    }
+
+    private void updateIcon(Player player) {
+        Voicechat.SERVER.updateIconStatus(player);
     }
 }
