@@ -259,6 +259,7 @@ public class Server extends Thread {
             } else {
                 ServerWorldUtils.getPlayersInRange(sender.getWorld(), sender.getLocation(), d, p -> !p.getUniqueId().equals(sender.getUniqueId()));
             }
+            playersToSendPacket.remove(sender);
         } else {
             playersToSendPacket = ServerWorldUtils.getPlayersInRange(sender.getWorld(), sender.getLocation(), distance, p -> !p.getUniqueId().equals(sender.getUniqueId()));
         }
