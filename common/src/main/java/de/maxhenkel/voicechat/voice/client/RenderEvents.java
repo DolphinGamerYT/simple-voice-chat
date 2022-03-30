@@ -74,7 +74,7 @@ public class RenderEvents {
                 if (muted)  {
                     renderIcon(stack, MICROPHONE_SPEAKER_MUTE_ICON);
                 } else {
-                    renderIcon(stack, talking ? SPEAKER_ICON : SPEAKER_OFF_ICON);
+                    renderIcon(stack, talking ? MICROPHONE_SPEAKER_ON_ICON : MICROPHONE_SPEAKER_OFF_ICON);
                 }
             } else {
                 if (muted) {
