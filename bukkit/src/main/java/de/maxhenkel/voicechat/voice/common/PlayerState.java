@@ -2,7 +2,6 @@ package de.maxhenkel.voicechat.voice.common;
 
 import de.maxhenkel.voicechat.util.FriendlyByteBuf;
 
-import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class PlayerState {

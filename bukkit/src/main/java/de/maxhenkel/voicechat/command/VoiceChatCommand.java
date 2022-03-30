@@ -3,27 +3,11 @@ package de.maxhenkel.voicechat.command;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import de.maxhenkel.voicechat.Voicechat;
-import de.maxhenkel.voicechat.net.NetManager;
-import de.maxhenkel.voicechat.permission.PermissionManager;
-import de.maxhenkel.voicechat.voice.common.PingPacket;
-import de.maxhenkel.voicechat.voice.common.PlayerState;
-import de.maxhenkel.voicechat.voice.server.ClientConnection;
-import de.maxhenkel.voicechat.voice.server.Group;
-import de.maxhenkel.voicechat.voice.server.PingManager;
-import de.maxhenkel.voicechat.voice.server.Server;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nullable;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @CommandAlias("voicechat|vc")

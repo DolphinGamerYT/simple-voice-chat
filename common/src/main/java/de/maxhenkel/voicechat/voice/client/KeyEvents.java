@@ -1,7 +1,6 @@
 package de.maxhenkel.voicechat.voice.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import de.maxhenkel.voicechat.VoicechatClient;
 import de.maxhenkel.voicechat.debug.DebugReport;
 import de.maxhenkel.voicechat.gui.VoiceChatScreen;
 import de.maxhenkel.voicechat.gui.VoiceChatSettingsScreen;

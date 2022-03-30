@@ -7,7 +7,6 @@ import de.maxhenkel.voicechat.VoicechatClient;
 import de.maxhenkel.voicechat.gui.audiodevice.SelectMicrophoneScreen;
 import de.maxhenkel.voicechat.gui.audiodevice.SelectSpeakerScreen;
 import de.maxhenkel.voicechat.gui.widgets.*;
-import de.maxhenkel.voicechat.gui.volume.PlayerVolumesScreen;
 import de.maxhenkel.voicechat.voice.client.Denoiser;
 import de.maxhenkel.voicechat.voice.common.Utils;
 import net.minecraft.client.gui.components.Button;

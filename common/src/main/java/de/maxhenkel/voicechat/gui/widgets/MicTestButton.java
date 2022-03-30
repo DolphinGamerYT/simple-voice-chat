@@ -3,7 +3,6 @@ package de.maxhenkel.voicechat.gui.widgets;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.maxhenkel.voicechat.Voicechat;
 import de.maxhenkel.voicechat.VoicechatClient;
-import de.maxhenkel.voicechat.intercompatibility.ClientCompatibilityManager;
 import de.maxhenkel.voicechat.voice.client.*;
 import de.maxhenkel.voicechat.voice.common.Utils;
 import net.minecraft.client.gui.components.AbstractButton;

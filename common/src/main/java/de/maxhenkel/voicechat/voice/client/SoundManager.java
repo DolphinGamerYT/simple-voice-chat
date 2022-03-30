@@ -3,7 +3,10 @@ package de.maxhenkel.voicechat.voice.client;
 import de.maxhenkel.voicechat.Voicechat;
 import de.maxhenkel.voicechat.intercompatibility.CommonCompatibilityManager;
 import de.maxhenkel.voicechat.plugins.PluginManager;
-import org.lwjgl.openal.*;
+import org.lwjgl.openal.AL11;
+import org.lwjgl.openal.ALC11;
+import org.lwjgl.openal.ALUtil;
+import org.lwjgl.openal.EXTThreadLocalContext;
 
 import javax.annotation.Nullable;
 import java.nio.IntBuffer;

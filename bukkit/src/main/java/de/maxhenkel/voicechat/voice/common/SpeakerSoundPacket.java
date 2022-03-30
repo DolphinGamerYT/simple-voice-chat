@@ -1,7 +1,6 @@
 package de.maxhenkel.voicechat.voice.common;
 
 import de.maxhenkel.voicechat.util.FriendlyByteBuf;
-import org.bukkit.Location;
 
 import java.util.UUID;
 

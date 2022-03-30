@@ -16,10 +16,7 @@ import de.maxhenkel.voicechat.plugins.impl.events.MicrophoneMuteEventImpl;
 import de.maxhenkel.voicechat.plugins.impl.events.VoicechatDisableEventImpl;
 import de.maxhenkel.voicechat.voice.common.ClientGroup;
 import de.maxhenkel.voicechat.voice.common.PlayerState;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nullable;
