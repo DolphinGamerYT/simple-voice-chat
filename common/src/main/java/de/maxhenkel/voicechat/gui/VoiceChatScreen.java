@@ -25,16 +25,16 @@ public class VoiceChatScreen extends VoiceChatScreenBase {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(Voicechat.MODID, "textures/gui/gui_voicechat.png");
     private static final ResourceLocation MICROPHONE = new ResourceLocation(Voicechat.MODID, "textures/icons/microphone_button.png");
-    private static final ResourceLocation HIDE = new ResourceLocation(Voicechat.MODID, "textures/icons/hide_button.png");
-    private static final ResourceLocation SPEAKER = new ResourceLocation(Voicechat.MODID, "textures/icons/speaker_button.png");
-    private static final ResourceLocation RECORD = new ResourceLocation(Voicechat.MODID, "textures/icons/record_button.png");
+    //private static final ResourceLocation HIDE = new ResourceLocation(Voicechat.MODID, "textures/icons/hide_button.png");
+    //private static final ResourceLocation SPEAKER = new ResourceLocation(Voicechat.MODID, "textures/icons/speaker_button.png");
+    //private static final ResourceLocation RECORD = new ResourceLocation(Voicechat.MODID, "textures/icons/record_button.png");
     private static final Component TITLE = new TranslatableComponent("gui.voicechat.voice_chat.title");
     private static final Component SETTINGS = new TranslatableComponent("message.voicechat.settings");
-    private static final Component GROUP = new TranslatableComponent("message.voicechat.group");
+    //private static final Component GROUP = new TranslatableComponent("message.voicechat.group");
 
     private ToggleImageButton mute;
-    private ToggleImageButton disable;
-    private HoverArea recordingHoverArea;
+    //private ToggleImageButton disable;
+    //private HoverArea recordingHoverArea;
 
     private ClientPlayerStateManager stateManager;
 
@@ -101,7 +101,7 @@ public class VoiceChatScreen extends VoiceChatScreenBase {
 
     private void checkButtons() {
         mute.active = MuteTooltipSupplier.canMuteMic();
-        disable.active = stateManager.canEnable();
+        //disable.active = stateManager.canEnable();
     }
 
     private void toggleRecording() {
@@ -140,9 +140,9 @@ public class VoiceChatScreen extends VoiceChatScreenBase {
             TextComponent time = new TextComponent(recorder.getDuration());
             font.draw(poseStack, time.withStyle(ChatFormatting.DARK_RED), (float) (guiLeft + (xSize - font.width(time)) / 2), guiTop + ySize - font.lineHeight - 7, 0);
 
-            if (recordingHoverArea.isHovered(guiLeft, guiTop, mouseX, mouseY)) {
+            /*if (recordingHoverArea.isHovered(guiLeft, guiTop, mouseX, mouseY)) {
                 renderTooltip(poseStack, new TranslatableComponent("message.voicechat.storage_size", recorder.getStorage()), mouseX, mouseY);
-            }
+            }*/
         }
     }
 

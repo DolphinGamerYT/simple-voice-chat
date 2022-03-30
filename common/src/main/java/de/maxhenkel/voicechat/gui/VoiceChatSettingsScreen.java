@@ -25,7 +25,7 @@ public class VoiceChatSettingsScreen extends VoiceChatScreenBase implements MicT
     private static final Component TITLE = new TranslatableComponent("gui.voicechat.voice_chat_settings.title");
     private static final Component ENABLED = new TranslatableComponent("message.voicechat.enabled");
     private static final Component DISABLED = new TranslatableComponent("message.voicechat.disabled");
-    private static final Component ADJUST_VOLUMES = new TranslatableComponent("message.voicechat.adjust_volumes");
+    //private static final Component ADJUST_VOLUMES = new TranslatableComponent("message.voicechat.adjust_volumes");
     private static final Component SELECT_MICROPHONE = new TranslatableComponent("message.voicechat.select_microphone");
     private static final Component SELECT_SPEAKER = new TranslatableComponent("message.voicechat.select_speaker");
     private static final Component BACK = new TranslatableComponent("message.voicechat.back");
