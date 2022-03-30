@@ -4,6 +4,7 @@ import co.aikar.commands.PaperCommandManager;
 import de.maxhenkel.configbuilder.ConfigBuilder;
 import de.maxhenkel.voicechat.api.BukkitVoicechatService;
 import de.maxhenkel.voicechat.command.VoiceChatCommand;
+import de.maxhenkel.voicechat.command.VoiceChatConfigCommand;
 import de.maxhenkel.voicechat.config.ServerConfig;
 import de.maxhenkel.voicechat.integration.placeholderapi.VoicechatExpansion;
 import de.maxhenkel.voicechat.models.VoiceRestrictions;
@@ -85,6 +86,7 @@ public final class Voicechat extends JavaPlugin {
 
         PaperCommandManager commandManager = new PaperCommandManager(this);
         commandManager.registerCommand(new VoiceChatCommand());
+        commandManager.registerCommand(new VoiceChatConfigCommand());
 
         try {
             if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
