@@ -30,40 +30,76 @@ public class VoiceChatCommand extends BaseCommand {
     }
 
     @Subcommand("speaker")
-    @CommandCompletion("on|off @nothing @players")
-    @Syntax("<on|off> [distance] [playerName]")
-    public void onSpeaker(Player player, String onOrOff, @Default("-1") Double distance, @Optional String playerName) {
-        if (onOrOff.equalsIgnoreCase("off")) {
-            Player target = player;
-            if (playerName != null) {
-                Player pp = Bukkit.getPlayer(playerName);
-                if (pp == null) {
-                    player.sendMessage(this.prefix + "§cPlayer not found.");
-                } else {
-                    target = pp;
-                }
-            }
+    public void speaker(Player player) {
+        player.sendMessage(this.prefix + "§aSpeaker mode: " + (Voicechat.VOICE_RESTRICTIONS.isSpeaker(player) ? "§aEnabled" : "§cDisabled") + (Voicechat.VOICE_RESTRICTIONS.getSpeakerDistance(player) > 0 ? "§7 (Distance: " + Voicechat.VOICE_RESTRICTIONS.getSpeakerDistance(player) + ")" : ""));
+        player.sendMessage(this.prefix + "§fTo enable speaker mode, use §e/vc speaker on§f.");
+        player.sendMessage(this.prefix + "§fTo disable speaker mode, use §e/vc speaker off§f.");
+        player.sendMessage(this.prefix + "§fTo set the distance, use §e/vc speaker distance <distance>§f.");
+        player.sendMessage(this.prefix + "§6[NOTE] &eYou can add a playername on the end to modify the speaker status of that player.");
+    }
 
-            if (Voicechat.VOICE_RESTRICTIONS.isSpeaker(target)) {
-                Voicechat.VOICE_RESTRICTIONS.removeSpeaker(player.getUniqueId());
-                target.sendMessage(this.prefix + "§aSpeaker mode disabled.");
-                if (target != player) {
-                    player.sendMessage(this.prefix + "§aSpeaker mode disabled for §e" + target.getName() + "§a.");
-                }
-
-                this.updateIcon(target);
+    @Subcommand("speaker on")
+    @Syntax("[playerName]")
+    @CommandCompletion("@players")
+    public void speakerOn(Player player, @Optional String playerName) {
+        Player target = player;
+        if (playerName != null) {
+            Player pp = Bukkit.getPlayer(playerName);
+            if (pp == null) {
+                player.sendMessage(this.prefix + "§cPlayer not found.");
             } else {
-                if (target == player) {
-                    player.sendMessage(this.prefix + "§cSpeaker mode is already disabled.");
-                } else {
-                    player.sendMessage(this.prefix + "§cSpeaker mode is already disabled for " + target.getName() + ".");
-                }
+                target = pp;
             }
-            return;
         }
 
-        if (!onOrOff.equalsIgnoreCase("on")) {
-            player.sendMessage(this.prefix + "§cInvalid argument.");
+        Voicechat.VOICE_RESTRICTIONS.addSpeaker(target.getUniqueId(), -1D);
+
+        target.sendMessage(this.prefix + "§aSpeaker mode enabled.");
+        if (target != player) {
+            player.sendMessage(this.prefix + "§aSpeaker mode enabled for " + target.getName());
+        }
+
+        this.updateIcon(target);
+    }
+
+    @Subcommand("speaker off")
+    @Syntax("[playerName]")
+    @CommandCompletion("@players")
+    public void speakerOff(Player player, @Optional String playerName) {
+        Player target = player;
+        if (playerName != null) {
+            Player pp = Bukkit.getPlayer(playerName);
+            if (pp == null) {
+                player.sendMessage(this.prefix + "§cPlayer not found.");
+            } else {
+                target = pp;
+            }
+        }
+
+        if (Voicechat.VOICE_RESTRICTIONS.isSpeaker(target)) {
+            Voicechat.VOICE_RESTRICTIONS.removeSpeaker(player.getUniqueId());
+            target.sendMessage(this.prefix + "§aSpeaker mode disabled.");
+            if (target != player) {
+                player.sendMessage(this.prefix + "§aSpeaker mode disabled for §e" + target.getName() + "§a.");
+            }
+
+        } else {
+            if (target == player) {
+                player.sendMessage(this.prefix + "§cSpeaker mode is already disabled.");
+            } else {
+                player.sendMessage(this.prefix + "§cSpeaker mode is already disabled for " + target.getName() + ".");
+            }
+        }
+
+        this.updateIcon(target);
+    }
+
+    @Subcommand("speaker distance")
+    @Syntax("<distance> [playerName]")
+    @CommandCompletion("NumberOfDistance @players")
+    public void speakerDistance(Player player, Double distance, @Optional String playerName) {
+        if (distance == null || distance <= 0) {
+            player.sendMessage(this.prefix + "§cInvalid distance. It must be greater than 0.");
             return;
         }
 
@@ -79,9 +115,9 @@ public class VoiceChatCommand extends BaseCommand {
 
         Voicechat.VOICE_RESTRICTIONS.addSpeaker(target.getUniqueId(), distance);
 
-        target.sendMessage(this.prefix + "§aSpeaker mode enabled." + (distance > 0 ? "§7 (Distance: " + distance + ")" : ""));
+        target.sendMessage(this.prefix + "§aSpeaker mode enabled." + "§7 (Distance: " + distance + ")");
         if (target != player) {
-            player.sendMessage(this.prefix + "§aSpeaker mode enabled for " + target.getName() + (distance > 0 ? "§7 (Distance: " + distance + ")" : ""));
+            player.sendMessage(this.prefix + "§aSpeaker mode enabled for " + target.getName() + "§7 (Distance: " + distance + ")");
         }
 
         this.updateIcon(target);
