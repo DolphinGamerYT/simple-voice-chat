@@ -132,6 +132,7 @@ public class ServerVoiceEvents implements Listener {
         try {
             ClientConnection connection = server.getConnections().get(player.getUniqueId());
             if (connection == null) throw new Exception("Connection not found");
+            getServer().sendPacket(packet, connection);
         } catch (Exception e) {
             Bukkit.getScheduler().runTaskLater(Voicechat.INSTANCE, () -> {
                 try {
