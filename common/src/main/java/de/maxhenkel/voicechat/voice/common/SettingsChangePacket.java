@@ -87,6 +87,10 @@ public class SettingsChangePacket implements Packet<SettingsChangePacket> {
         this.settings = new ArrayList<>(List.of(settings));
     }
 
+    public SettingsChangePacket() {
+        this.settings = new ArrayList<>();
+    }
+
     public ArrayList<Setting> getSettings() {
         return settings;
     }
